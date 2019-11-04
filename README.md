@@ -1,2 +1,2 @@
 # al2000
-Répo pour le projet de gestion / génie Logiciel.
+Repo pour le projet de gestion / génie Logiciel.
