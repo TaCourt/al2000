@@ -1,4 +1,4 @@
 package al2000.core;
 
-public class ChildUserFactory {
+public class ChildUserFactory extends UserFactory {
 }

@@ -1,4 +1,4 @@
 package al2000.core;
 
-public class AdultUserFactory {
+public class AdultUserFactory extends UserFactory {
 }

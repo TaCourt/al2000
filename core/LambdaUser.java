@@ -1,4 +1,4 @@
 package al2000.core;
 
-public class LambdaUser {
+public class LambdaUser extends User {
 }
