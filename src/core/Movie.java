@@ -1,4 +1,4 @@
-package al2000.core;
+package al2000.src.core;
 
 public class Movie {
 }
