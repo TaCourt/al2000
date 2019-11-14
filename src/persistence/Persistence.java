@@ -1,4 +1,4 @@
-package persistence;
+package src.persistence;
 
 public interface Persistence {
 

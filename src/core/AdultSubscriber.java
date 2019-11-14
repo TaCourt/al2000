@@ -1,4 +1,7 @@
-package al2000.src.core;
+package src.core;
 
 public class AdultSubscriber extends Subscriber {
+    public AdultSubscriber() {
+        
+    }
 }
