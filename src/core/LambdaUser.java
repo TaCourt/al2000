@@ -1,6 +1,5 @@
 package src.core;
 
-
 public class LambdaUser extends User {
     private Rental currentRental;
 
