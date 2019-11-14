@@ -39,7 +39,9 @@ public abstract class Subscriber extends User {
     @Override
     public void returnMovie(Movie m) {
         for (Rental r : currentRentedMovies) {
-            if (r.getMovie().equal(m);
+            if (r.getMovie().equals(m)) {
+                r.setReturnDate();
+            }
         }
     }
 

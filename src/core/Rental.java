@@ -11,4 +11,12 @@ public class Rental {
         this.rentingDate = Date.from(Instant.now());
         this.movie = movie;
     }
+
+    public Movie getMovie() {
+        return this.movie;
+    }
+
+    public void setReturnDate() {
+        this.rentingDate = Date.from(Instant.now());
+    }
 }
