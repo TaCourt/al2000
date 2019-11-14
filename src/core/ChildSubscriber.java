@@ -1,4 +1,6 @@
-package al2000.src.core;
+package src.core;
 
-public class ChildSubscriber extends Subscriber{
+import src.core.Subscriber;
+
+public class ChildSubscriber extends Subscriber {
 }
