@@ -3,10 +3,9 @@ package src.core;
 public class FilmLibrary{
     private String filmsCyberVideo;
     private String filmsSupposeDispo;
-    private Int nbExemplaireFilm;
+    private int nbExemplaireFilm;
 
-    //Constructeur
-    public FilmLibrary(String filmsCyberVideo, String filmsSupposeDispo, Int nbExemplaireFilm){
+    public FilmLibrary(String filmsCyberVideo, String filmsSupposeDispo, int nbExemplaireFilm){
         this.filmsCyberVideo = filmsCyberVideo;
         this.filmsSupposeDispo = filmsSupposeDispo;
         this.nbExemplaireFilm = nbExemplaireFilm;

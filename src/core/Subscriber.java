@@ -15,13 +15,13 @@ public abstract class Subscriber extends User {
     private List<String> categoryRestrained;
     private List<Movie> moviesRestrained;
 
-    public Subscriber(long creditCard, String name, String firstName, double balance, int maxMovieRented) {
+    public Subscriber(long creditCard, String name, String firstName, double balance) {
         super(creditCard);
         this.name = name;
         this.firstName = firstName;
         this.balanceSubscriberCard = balance;
         this.currentRentedMovies = new ArrayList<>();
-        this.maxMovieRented = maxMovieRented;
+        this.maxMovieRented = 3;
         this.moviesRestrained = new ArrayList<>();
         this.categoryRestrained = new ArrayList<>();
         this.history = new ArrayList<>();

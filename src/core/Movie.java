@@ -6,14 +6,13 @@ public class Movie{
     private String titre;
     private String categorie;
     private String synopsis;
-    private Int duree;
+    private int duree;
     private String langue;
     //private ...... liste;
     private String acteurs;
     private String realisateurs;
 
-    //Constructeur
-    public Movie(String affiche, String titre, String categorie, String synopsis, Int duree, String langue, String acteurs, String realisateurs){
+    public Movie(String affiche, String titre, String categorie, String synopsis, int duree, String langue, String acteurs, String realisateurs){
         this.affiche = affiche;
         this.titre = titre;
         this.categorie = categorie;
