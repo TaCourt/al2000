@@ -1,10 +1,12 @@
 package src.core;
 
+import java.util.UUID;
+
 public class LambdaUser extends User {
     private Rental currentRental;
 
-    public LambdaUser(long card) {
-        super(card);
+    public LambdaUser(UUID userId, long card) {
+        super(userId, card);
     }
 
     @Override
@@ -19,5 +21,9 @@ public class LambdaUser extends User {
     @Override
     public void returnMovie(Movie m) {
         currentRental = null;
+    }
+
+    public Rental getCurrentRental () {
+        return this.currentRental;
     }
 }

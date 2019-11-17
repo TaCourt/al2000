@@ -2,6 +2,7 @@ package src.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class Subscriber extends User {
     private String name;
@@ -15,8 +16,8 @@ public abstract class Subscriber extends User {
     private List<String> categoryRestrained;
     private List<Movie> moviesRestrained;
 
-    public Subscriber(long creditCard, String name, String firstName, double balance) {
-        super(creditCard);
+    public Subscriber(UUID subscriberId, long creditCard, String name, String firstName, double balance) {
+        super(subscriberId, creditCard);
         this.name = name;
         this.firstName = firstName;
         this.balanceSubscriberCard = balance;
@@ -64,5 +65,37 @@ public abstract class Subscriber extends User {
 
     public boolean removeRestrainedCategory(String category) {
         return moviesRestrained.remove(category);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public double getBalanceSubscriberCard() {
+        return balanceSubscriberCard;
+    }
+
+    public List<Rental> getCurrentRentedMovies() {
+        return new ArrayList<Rental>(currentRentedMovies);
+    }
+
+    public int getMaxMovieRented() {
+        return maxMovieRented;
+    }
+
+    public List<Rental> getHistory() {
+        return new ArrayList<Rental>(history);
+    }
+
+    public List<String> getCategoryRestrained() {
+        return new ArrayList<String>(categoryRestrained);
+    }
+
+    public List<Movie> getMoviesRestrained() {
+        return new ArrayList<Movie>(moviesRestrained);
     }
 }

@@ -1,13 +1,13 @@
 package src.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AdultSubscriber extends Subscriber {
+
     private List<ChildSubscriber> children;
 
-    public AdultSubscriber(long creditCard, String name, String firstName, double balance) {
-        super(creditCard, name, firstName, balance);
+    public AdultSubscriber(UUID adultSubscriberId, long creditCard, String name, String firstName, double balance) {
+        super(adultSubscriberId, creditCard, name, firstName, balance);
         this.children = new ArrayList<>();
     }
 
@@ -36,4 +36,7 @@ public class AdultSubscriber extends Subscriber {
     }
 
 
+    public List<ChildSubscriber> getChildren() {
+        return new ArrayList<ChildSubscriber>(this.children);
+    }
 }
