@@ -1,13 +1,23 @@
 package src.core;
 
+import java.util.List;
+
 public class FilmLibrary{
-    private String filmsCyberVideo;
-    private String filmsSupposeDispo;
+    private List<Movie> cyberVideoMovies;
+    private List<Movie> availableMovies;
     private int nbExemplaireFilm;
 
-    public FilmLibrary(String filmsCyberVideo, String filmsSupposeDispo, int nbExemplaireFilm){
-        this.filmsCyberVideo = filmsCyberVideo;
-        this.filmsSupposeDispo = filmsSupposeDispo;
+    public FilmLibrary(List<Movie> cyberVideoMovie, List<Movie> availableMovies, int nbExemplaireFilm){
+        this.cyberVideoMovies = cyberVideoMovie;
+        this.availableMovies = availableMovies;
         this.nbExemplaireFilm = nbExemplaireFilm;
+    }
+
+    public List<Movie> getCyberVideoMovies() {
+        return this.cyberVideoMovies;
+    }
+
+    public List<Movie> getAvailableMovies() {
+        return this.availableMovies;
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Subscriber extends User {
+    private long subscriberCard;
     private String name;
     private String firstName;
     private double balanceSubscriberCard;
@@ -15,8 +16,9 @@ public abstract class Subscriber extends User {
     private List<String> categoryRestrained;
     private List<Movie> moviesRestrained;
 
-    public Subscriber(long creditCard, String name, String firstName, double balance) {
+    public Subscriber(long subscriberCard, long creditCard, String name, String firstName, double balance) {
         super(creditCard);
+        this.subscriberCard = subscriberCard;
         this.name = name;
         this.firstName = firstName;
         this.balanceSubscriberCard = balance;
@@ -64,5 +66,12 @@ public abstract class Subscriber extends User {
 
     public boolean removeRestrainedCategory(String category) {
         return moviesRestrained.remove(category);
+    }
+
+    public boolean identify(long card) {
+        if (card == this.subscriberCard) {
+            return true;
+        }
+        return false;
     }
 }
