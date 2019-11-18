@@ -3,19 +3,20 @@ package src.core;
 
 import java.util.UUID;
 
-public class Movie implements Cloneable {
+
+public class Movie{
+    private UUID movieId;
     private String affiche;
     private String titre;
     private String categorie;
     private String synopsis;
     private int duree;
     private String langue;
-    //private ...... liste;
     private String acteurs;
     private String realisateurs;
-    private UUID movieID;
 
-    public Movie(String affiche, String titre, String categorie, String synopsis, int duree, String langue, String acteurs, String realisateurs){
+    public Movie(UUID movieId, String affiche, String titre, String categorie, String synopsis, int duree, String langue, String acteurs, String realisateurs){
+        this.movieId = movieId;
         this.affiche = affiche;
         this.titre = titre;
         this.categorie = categorie;
@@ -24,10 +25,9 @@ public class Movie implements Cloneable {
         this.langue = langue;
         this.acteurs = acteurs;
         this.realisateurs = realisateurs;
-        this.movieID = UUID.randomUUID();
     }
 
-    public UUID getMovieID() {
-        return this.movieID;
+    public UUID getMovieId() {
+        return this.movieId;
     }
 }

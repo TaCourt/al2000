@@ -30,23 +30,23 @@ public class FilmLibrary{
     }
 
     public void addMovie(Movie m) {
-        Integer nbCopies = nbMovieCopies.get(m.getMovieID());
+        Integer nbCopies = nbMovieCopies.get(m.getMovieId());
         if (nbCopies == 0) {
-            availableMovies.put(m.getMovieID(), m);
+            availableMovies.put(m.getMovieId(), m);
         }
         nbCopies++;
 
     }
 
     public boolean removeMovie(Movie m) {
-        Integer nbCopies = nbMovieCopies.get(m.getMovieID());
+        Integer nbCopies = nbMovieCopies.get(m.getMovieId());
         if (nbCopies < 1) {
             return false;
         }
-        nbMovieCopies.get(m.getMovieID());
+        nbMovieCopies.get(m.getMovieId());
         nbCopies--;
         if (nbCopies == 0) {
-            availableMovies.remove(m.getMovieID());
+            availableMovies.remove(m.getMovieId());
         }
         return true;
     }
