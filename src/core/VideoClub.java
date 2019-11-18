@@ -58,8 +58,69 @@ public class VideoClub {
     public boolean exists(String identifiant){
         return true;
     }
+
+    public String[] getMovieFromTitle(String title){
+        Movie movie = movieList.get(0); // recherche de la movie
+        String [] movieData = new String[9];
+        movieData[0] = movie.affiche;
+        movieData[1] = movie.titre;
+        movieData[2] = movie.categorie;
+        movieData[3] = movie.synopsis;
+        movieData[4] = movie.duree.toString();
+        movieData[5] = movie.langue;
+        movieData[6] = movie.acteurs;
+        movieData[7] = movie.realisateurs;
+        movieData[8] = movie.identifiant;
+        return movieData;
+    }
     public void rentMovie(String identifiant){
 
     }
 
+    public List<String> getCategories(){
+        List<String> categories = new LinkedList<>();
+        categories.add("Horreur");
+        categories.add("Fantastique");
+        categories.add("Comédie");
+        categories.add("Drame");
+        categories.add("Pour Adulte");
+        return categories;
+    }
+
+    public List<String[]> getMoviesOfCategory(String category){
+        List<String[]> movieListData = new LinkedList<>();
+        for( Movie movie : movieList){
+            String [] movieData = new String[9];
+            movieData[0] = movie.affiche;
+            movieData[1] = movie.titre;
+            movieData[2] = movie.categorie;
+            movieData[3] = movie.synopsis;
+            movieData[4] = movie.duree.toString();
+            movieData[5] = movie.langue;
+            movieData[6] = movie.acteurs;
+            movieData[7] = movie.realisateurs;
+            movieData[8] = movie.identifiant;
+            movieListData.add(movieData);
+        }
+        return movieListData;
+    }
+
+    public void retunMovie(String idMovieReturned) {
+
+    }
+
+    public void restrictCategory(String chosenCategory) {
+
+    }
+
+    public void createNewSubscriber(String[] userData) {
+//        userData[0] = nom
+//        userData[1] = prenom
+//        userData[2] = num CB
+    }
+
+    public void createNewChildSubscriber(String[] userData) {
+//        userData[0] = nom
+//        userData[1] = prenom
+    }
 }

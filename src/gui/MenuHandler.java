@@ -13,14 +13,6 @@ public class MenuHandler {
         optionsCount = 0;
         options = new HashMap<>();
     }
-    public MenuHandler(List<String> list){
-        options = new HashMap<>();
-        optionsCount = 0;
-        for( String line : list){
-            options.put(optionsCount,line);
-            optionsCount++;
-        }
-    }
 
     public void addOption(String line){
         optionsCount++;

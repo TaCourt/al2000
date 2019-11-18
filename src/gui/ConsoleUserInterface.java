@@ -7,9 +7,14 @@ public class ConsoleUserInterface implements UserInterface {
 
      src.core.VideoClub videoClub;
 
+     String prenom;
+     String nom;
+     Boolean isConnected;
+
 
     public ConsoleUserInterface(src.core.VideoClub videoClub){
         this.videoClub = videoClub;
+        isConnected = false;
     }
 
     // ---------------------------------------------------------
@@ -23,42 +28,90 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     @Override
-    public void cyberVideoFilms() {
-
+    public void cyberVideoMovies() {
+        List<String[]> movies = videoClub.getAvailableMovies();
+        printMovieList(movies);
+        redirectToMainMenu();
     }
 
     @Override
-    public void supposedAvailableFilms() {
+    public void supposedAvailableMovies() {
         List<String[]> movies = videoClub.getAvailableMovies();
         printMovieList(movies);
-        int userChoice = printSubscriberMainMenu();
-        redirectFromMainSubscriberMenu(userChoice);
+        redirectToMainMenu();
+    }
 
-
+    public void availableMovies() {
+        List<String[]> movies = videoClub.getAvailableMovies();
+        printMovieList(movies);
+        redirectToMainMenu();
     }
 
     @Override
     public void signUp() {
+        System.out.println("Formulaire de création de compte :");
+        String[] userData = new String[3];
+        userData[0] = getStringFromUser("Nom :");
+        userData[1] = getStringFromUser("Prénom:");
+        userData[2] = getStringFromUser("Numéro de carte bleue:");
 
+        String validationWord = printUserFormFinalValidation();
+
+        if(validationWord.equals("valider")){
+            videoClub.createNewSubscriber(userData);
+            System.out.println("Opération validée.");
+            System.out.println("Faites une demande de carte " +
+                    "d'abonné pour vous connecter lors de votre prochaine visite");
+        }else if( validationWord.equals("annuler")){
+            System.out.println("Opération annulée.");
+        }
+        redirectToMainMenu();
     }
 
     @Override
     public void signUpForChild() {
+        System.out.println("Formulaire de création de compte enfant :");
+        String[] userData = new String[2];
+        userData[0] = getStringFromUser("Nom :");
+        userData[1] = getStringFromUser("Prénom:");
 
+        String validationWord = printUserFormFinalValidation();
+
+        if(validationWord.equals("valider")){
+            videoClub.createNewChildSubscriber(userData);
+            System.out.println("Opération validée.");
+            System.out.println("Faites une demande de carte " +
+                    "d'abonné pour permettre à votre enfant de se connecter lors de sa prochaine visite");
+            System.out.println("Son compte sera rattaché au votre, et à votre carte bleue");
+        }else if( validationWord.equals("annuler")){
+            System.out.println("Opération annulée.");
+        }
+        redirectToMainMenu();
     }
 
     @Override
     public void signIn() {
         String numCarte = printSignInPage();
         String[] infosUser = videoClub.login(numCarte);
-        redirectFromLoginPage(infosUser);
+        redirectFromLoginPage(infosUser); // set isConnected, prenom et nom
     }
 
 
 
     @Override
     public void accountManagement() {
+        printAccountManagement();
+        List<String> categories = videoClub.getCategories();
+        String chosenCategory = printCategoryList(categories);
+        if (chosenCategory.isEmpty()){
+            System.err.println("Erreur : entrez un nom de catégorie valide");
+        }else{
+            videoClub.restrictCategory(chosenCategory);
+            System.out.println("Opération enregistré");
+            System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de vos prochaines recherches");
+        }
 
+        redirectToMainMenu();
     }
 
     @Override
@@ -72,32 +125,66 @@ public class ConsoleUserInterface implements UserInterface {
             System.err.println("Utilisez les fonctions de recherche pour le trouver.");
         }
 
-        printSubscriberMainMenu();
+        redirectToMainMenu();
 
     }
 
     @Override
     public void returnMovie() {
+        String idMovieReturned = printReturnAMovie();
+        videoClub.retunMovie(idMovieReturned);
+        System.out.println("Veuillez placer le DVD dans la trappe");
+
+        redirectToMainMenu();
 
     }
 
     @Override
     public void reportABug() {
-
+        String report = printBugReportText();
+        System.out.println("Merci pour votre participation.");
+        redirectToMainMenu();
     }
 
-    public void searchAMovie(){
-
-    }
 
     public void signOut(){
-
+        this.prenom = "";
+        this.nom = "";
+        this.isConnected = false;
+        redirectToMainMenu();
     }
 
     public void welcomeSubscriberPage(String prenom, String nom){
         int userChoice = printWelcomeMenuSubscriber(prenom,nom);
         redirectFromMainSubscriberMenu(userChoice);
     }
+
+    public void searchACategory(){
+        List<String> categories = videoClub.getCategories();
+        String chosenCategory = printCategoryList(categories);
+        if (chosenCategory.isEmpty()){
+            System.err.println("Erreur : entrez un nom de catégorie valide");
+        }else{
+            List<String[]> moviesOfCategory = videoClub.getMoviesOfCategory(chosenCategory);
+            printMovieList(moviesOfCategory);
+        }
+
+        redirectToMainMenu();
+    }
+
+    public void searchAMovie(){
+        String searchedTitle = printSearchFromTitle();
+        String[] movie = videoClub.getMovieFromTitle(searchedTitle);
+        if (movie == null) {
+            System.err.println("Aucun film trouvé ayant ce titre, vérifiez l'orthograpge.");
+        }else{
+            System.out.println("Le film à été trouvé :");
+            printMovie(movie);
+        }
+
+        redirectToMainMenu();
+    }
+
 
     // ---------------------------------------------------------
     // Méthodes d'affichage et de récupérations d'informations
@@ -115,38 +202,47 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     private int printWelcomeMenu(){
-        System.out.println("Bienvenue chez Cyber Vidéo !!");
+        System.out.println("-----------------------------------------------");
+        System.out.println("-----  Bienvenue chez Cyber Vidéo !!  ---------");
+        System.out.println("-----------------------------------------------");
         System.out.println();
         MenuHandler menu = new MenuHandler();
         menu.addOption("Vous avez un compte ? Connectez-vous.");
         menu.addOption("Lister les films disponible");
-        menu.addOption("Rechercher un film");
+        menu.addOption("Lister tous les films de cet AL2000 (même ceux loués actuellement)");
+        menu.addOption("Lister tous les films chez cyberVideo");
+        menu.addOption("Rechercher un film par titre");
+        menu.addOption("Afficher les films disponible d'une catégorie");
         menu.addOption("Louer un film");
         menu.addOption("Retourner un film");
         menu.addOption("Signaler un bug");
-        int userChoice = menu.getIntResponse();
-        return userChoice;
+        menu.addOption("Créer un compte");
+        return menu.getIntResponse();
     }
 
     private int printWelcomeMenuSubscriber(String prenom, String nom){
-        System.out.println("Ravi de vous revoir " + prenom + " " + nom + " !");
+        System.out.println("--------------------------------------------------");
+        System.out.println("------- Ravi de vous revoir " + prenom + " " + nom + " ! -------");
+        System.out.println("--------------------------------------------------");
         System.out.println();
-        int userChoice = printSubscriberMainMenu();
-        return userChoice;
+        return printSubscriberMainMenu();
     }
 
     private int printSubscriberMainMenu(){
         MenuHandler menu = new MenuHandler();
         menu.addOption("Lister les films disponible");
-        menu.addOption("Rechercher un film");
+        menu.addOption("Lister tous les films de cet AL2000 (même ceux loués actuellement)");
+        menu.addOption("Lister tous les films chez cyberVideo");
+        menu.addOption("Rechercher un film par titre");
+        menu.addOption("Afficher les films disponible d'une catégorie");
         menu.addOption("Louer un film");
         menu.addOption("Retourner un film");
         menu.addOption("Gérer mon compte");
         menu.addOption("Signaler un bug");
+        menu.addOption("Créer un compte parrainé pour un enfant");
         menu.addOption("Déconnexion");
 
-        int userChoice = menu.getIntResponse();
-        return userChoice;
+        return menu.getIntResponse();
     }
 
     private void printLoginFailedMessage() {
@@ -175,18 +271,111 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     private String printRentMovie(){
-        boolean isSuccess;
         System.out.println("Pour louer un film, saisissez l'identifiant du film :");
         System.out.println();
         Scanner scanner = new Scanner(System.in);
         String id = scanner.next();
-        return id;
+        if( id == null ){
+            return "";
+        }else{
+            return id;
+        }
     }
 
     private void printRentMovieSuccess(){
         System.out.println("Traitement de la location en cours...");
         System.out.println("Vous pouvez récupérer votre film dans la trappe de sortie.");
+        System.out.println();
     }
+
+    private String printSearchFromTitle(){
+        System.out.println("Recherche à partir d'un titre");
+        System.out.println("Entrez le titre du film que vous cherchez :");
+        Scanner scanner = new Scanner(System.in);
+        String titre = scanner.next();
+        if( titre == null ){
+            return "";
+        }else{
+            return titre;
+        }
+    }
+
+    private String printCategoryList(List<String> categoryList){
+        StringBuilder categories = new StringBuilder();
+        for( String categ : categoryList){
+            categories.append(categ);
+            categories.append(" | ");
+        }
+        System.out.println("Voici la liste des catégories disponible :");
+        System.out.println(categories.toString());
+        System.out.println();
+        System.out.println("Entrez le nom de la catégorie à filtrer :");
+        Scanner scanner = new Scanner(System.in);
+        String chosenCategory = scanner.next();
+        if( chosenCategory == null ){
+            return "";
+        }else{
+            return chosenCategory;
+        }
+    }
+
+    private String printBugReportText(){
+        System.out.println("Merci de prendre le temps de nous signaler les problèmes rencontrés");
+        System.out.println("Ceci nous aide grandement à faire évoluer notre système");
+        System.out.println("Expliquez nous ce qu'il s'est passé en une ligne :");
+        Scanner scanner = new Scanner(System.in);
+        String report = scanner.next();
+        if( report == null ){
+            return "";
+        }else{
+            return report;
+        }
+    }
+
+    private String printReturnAMovie(){
+        System.err.println("Pour simuler l'acquisition du film par la machine, on fait remplir son id au client.");
+        System.out.println("Pour rendre un film, veuillez composer son identifiant :");
+        Scanner scanner = new Scanner(System.in);
+        String idReturnedMovie = scanner.next();
+        if( idReturnedMovie == null ){
+            return "";
+        }else{
+            return idReturnedMovie;
+        }
+    }
+
+    private void printAccountManagement(){
+        System.out.println("Ici, vous pouvez limiter les films visible à votre compte");
+        System.out.println("Choisissez la catégorie à limiter, parmis les suivantes :");
+    }
+
+    private String getStringFromUser(String text){
+        System.out.println(text);
+        Scanner scanner = new Scanner(System.in);
+        String userEntry = scanner.next();
+        if( userEntry == null ){
+            userEntry = "";
+        }
+        while( userEntry == null || userEntry.isEmpty() ){
+            System.err.println("Format invalide, entrez");
+            System.out.println(text);
+            userEntry = scanner.next();
+        }
+        return userEntry;
+    }
+
+    private String printUserFormFinalValidation(){
+        System.out.println("Confirmer la création de compte ?");
+        String validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        while( !validationWord.equals("valider") && !validationWord.equals("annuler")){
+            System.err.println("Réponse non reconnue");
+            System.out.println("Confirmer la création de compte ?");
+            validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        }
+
+        return validationWord;
+    }
+
 
 
     // ---------------------------------------------------------
@@ -200,23 +389,39 @@ public class ConsoleUserInterface implements UserInterface {
                 break;
 
             case 2:
-                supposedAvailableFilms();
+                availableMovies();
                 break;
 
             case 3:
-                searchAMovie();
+                supposedAvailableMovies();
                 break;
 
             case 4:
-                rentMovie();
+                cyberVideoMovies();
                 break;
 
             case 5:
-                returnMovie();
+                searchAMovie();
                 break;
 
             case 6:
+                searchACategory();
+                break;
+
+            case 7:
+                rentMovie();
+                break;
+
+            case 8:
+                returnMovie();
+                break;
+
+            case 9:
                 reportABug();
+                break;
+
+            case 10:
+                signUp();
                 break;
         }
     }
@@ -224,30 +429,45 @@ public class ConsoleUserInterface implements UserInterface {
     private void redirectFromMainSubscriberMenu(int userChoice) {
         switch(userChoice){
             case 1:
-                supposedAvailableFilms();
-                break;
+                availableMovies();
 
             case 2:
-                searchAMovie();
+                supposedAvailableMovies();
                 break;
 
             case 3:
-                rentMovie();
+                cyberVideoMovies();
                 break;
 
             case 4:
-                returnMovie();
+                searchAMovie();
                 break;
 
             case 5:
-                accountManagement();
+                searchACategory();
                 break;
 
             case 6:
-                reportABug();
+                rentMovie();
                 break;
 
             case 7:
+                returnMovie();
+                break;
+
+            case 8:
+                accountManagement();
+                break;
+
+            case 9:
+                reportABug();
+                break;
+
+            case 10:
+                signUpForChild();
+                break;
+
+            case 11:
                 signOut();
                 break;
         }
@@ -257,6 +477,9 @@ public class ConsoleUserInterface implements UserInterface {
         String prenom = userInfos[0];
         String nom = userInfos[1];
         if (!prenom.isEmpty() || !nom.isEmpty()) {
+            isConnected = true;
+            this.prenom = prenom;
+            this.nom = nom;
             welcomeSubscriberPage(prenom,nom);
         } else {
             printLoginFailedMessage();
@@ -264,7 +487,17 @@ public class ConsoleUserInterface implements UserInterface {
         }
     }
 
+    private void redirectToMainMenu(){
 
+        System.out.println("------------------------------------------");
+        if(isConnected){
+            int userChoice = printSubscriberMainMenu();
+            redirectFromMainSubscriberMenu(userChoice);
+        }else{
+            int userChoice = printWelcomeMenu();
+            redirectFromWelcomePage(userChoice);
+        }
 
+    }
 
 }
