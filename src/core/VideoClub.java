@@ -1,18 +1,30 @@
 package src.core;
 
+import org.json.simple.parser.ParseException;
 import src.persistence.JSONPersistence;
 import src.persistence.Persistence;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class VideoClub {
+    public enum ErrorState {DB_NOT_LOADED};
+    private ErrorState errorState = null;
+
     private Persistence persistence;
+
     private final String LAMBDA_USER_ACCOUNT = "lambdaUser";
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
     private final String CHILD_SUBSCRIBER_ACCOUNT = "childSubscriber";
 
     public VideoClub () {
-        this.persistence = JSONPersistence.getInstance();
+        try {
+            this.persistence = new JSONPersistence();
+        }
+        catch (IOException | ParseException e) {
+            this.errorState = ErrorState.DB_NOT_LOADED;
+        }
     }
 
     public void save (LambdaUser lambdaUser) {

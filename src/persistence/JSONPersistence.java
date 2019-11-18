@@ -28,36 +28,18 @@ public class JSONPersistence implements Persistence {
      *  Gérer les exceptions (de getJSONParser) pour faire remonter à l'user à travers l'IHM
      *  (Si ça échoue, aucun moyen d'utiliser la machine car pas de DB)
      */
-    private JSONPersistence () {
+    public JSONPersistence () throws FileNotFoundException, IOException, ParseException {
         this.USER_JSON_DB = this.getJSONParser(this.USER_DB);
         this.MOVIE_JSON_DB = this.getJSONParser(this.MOVIE_DB);
     }
 
-    private JSONObject getJSONParser (String db) {
+    private JSONObject getJSONParser (String db) throws FileNotFoundException, IOException, ParseException {
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
 
-        try (FileReader reader = new FileReader(db)) {
-            JSONObject userList = (JSONObject) jsonParser.parse(reader);
-            return userList;
-        }
-        catch (FileNotFoundException e) {
-            System.out.println(e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static JSONPersistence getInstance () {
-        if (instance == null) instance = new JSONPersistence();
-        return instance;
+        FileReader reader = new FileReader(db);
+        JSONObject userList = (JSONObject) jsonParser.parse(reader);
+        return userList;
     }
 
     private void saveToFile (String db, JSONObject JSON_db) {
