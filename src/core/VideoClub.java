@@ -1,6 +1,5 @@
 package src.core;
 
-import java.util.Iterator;
 import java.util.List;
 import org.json.simple.parser.ParseException;
 import src.persistence.JSONPersistence;
@@ -45,6 +44,7 @@ public class VideoClub {
 
         this.persistence.saveUser(userDetails);
     }
+
     private void save (Subscriber subscriber, HashMap<String, String> userDetails) {
         final StringJoiner joinedCategoryRestrained = new StringJoiner(",");
         subscriber.getCategoryRestrained().forEach((String category) -> {joinedCategoryRestrained.add(category);});
@@ -71,6 +71,7 @@ public class VideoClub {
 
         this.persistence.saveUser(userDetails);
     }
+
     public void save (AdultSubscriber adultSubscriber) {
         HashMap<String, String> userDetails = new HashMap<String, String>();
 
@@ -82,6 +83,7 @@ public class VideoClub {
 
         this.save(adultSubscriber, userDetails);
     }
+
     public void save (ChildSubscriber childSubscriber) {
         HashMap<String, String> userDetails = new HashMap<String, String>();
 
@@ -138,12 +140,42 @@ public class VideoClub {
         this.fineCost = fineCost;
     }
 
-    public Map<UUID, Movie> getCyberVideoMovie() {
-        return movieLibrary.getCyberVideoMovies();
+    public List<String[]> getCyberVideoMovie() {
+        return convertList(movieLibrary.getCyberVideoMovies());
     }
 
-    public Map<UUID, Movie> getAvailableMovies() {
-        return movieLibrary.getAvailableMovies();
+    public List<String[]> getAvailableMovies() {
+        return convertList(movieLibrary.getAvailableMovies());
+    }
+
+    public List<String[]> getAl2000Movies() {
+        return convertList(movieLibrary.getAl2000Movies());
+    }
+
+    public List<String[]> getMovie(String title) {
+        return convertList(movieLibrary.getMovie(title));
+    }
+
+    public List<String[]> getMoviesByCategory(String category) {
+        return convertList(movieLibrary.getMovie(category));
+    }
+
+    public List<String[]> convertList(Map<Long, Movie> map) {
+        List<String[]> toReturn = new LinkedList();
+        for (Long key : movieLibrary.getCyberVideoMovies().keySet()) {
+            String[] movie = new String[9];
+            movie[0] = map.get(key).getAffiche();
+            movie[1] = map.get(key).getTitle();
+            movie[2] = map.get(key).getCategory();
+            movie[3] = map.get(key).getSynopsis();
+            movie[4] = map.get(key).getDuration().toString();
+            movie[5] = map.get(key).getLanguage();
+            movie[6] = map.get(key).getActor();
+            movie[7] = map.get(key).getDirector();
+            movie[8] = map.get(key).getMovieId().toString();
+            toReturn.add(movie);
+        }
+        return toReturn;
     }
 
     public void rentingMovie(Movie m) {
