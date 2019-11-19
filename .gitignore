@@ -23,5 +23,9 @@
 hs_err_pid*
 /bin/
 
+.idea/
+src/gui/tmpMain.java
+out/
+al2000.iml
 .classpath
 .project
