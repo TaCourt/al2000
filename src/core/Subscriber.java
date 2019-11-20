@@ -1,5 +1,4 @@
 package src.core;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -97,5 +96,6 @@ public abstract class Subscriber extends User {
 
     public List<Movie> getMoviesRestrained() {
         return new ArrayList<Movie>(moviesRestrained);
+
     }
 }

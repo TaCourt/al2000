@@ -1,7 +1,6 @@
 package src.core;
 
 import java.util.UUID;
-
 public abstract class User {
     private UUID userId;
     private long creditCard;

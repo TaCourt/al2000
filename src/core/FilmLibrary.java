@@ -31,7 +31,7 @@ public class FilmLibrary{
         return this.availableMovies;
     }
 
-    public Map<Long, Movie> getMovie(String titre) {
+    public Map<Long, Movie> getMovieFromTitle(String titre) {
         Map<Long, Movie> toReturn = new HashMap();
         for (Long key : al2000Movies.keySet()) {
             if (al2000Movies.get(key).getTitle().equals(titre)) {
@@ -39,6 +39,10 @@ public class FilmLibrary{
             }
         }
         return toReturn;
+    }
+
+    public Movie getMovie(String id) {
+        return al2000Movies.get(Long.parseLong(id));
     }
 
     public Map<Long, Movie> getMovieByCategory(String category) {
@@ -78,8 +82,5 @@ public class FilmLibrary{
     public List<String> getCategoriesSet() {
         return this.categoriesSet;
     }
-
-
-
 
 }
