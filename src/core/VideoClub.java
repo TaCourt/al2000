@@ -21,7 +21,8 @@ public class VideoClub {
     private List<Technician> technicians;
     private UserFactory factory;
     private FilmLibrary movieLibrary;
-    private User currentUser;
+    private LambdaUser defaultUser;
+    private Subscriber currentSubscriber;
     private int fineCost;
 
     public VideoClub () {
@@ -31,18 +32,6 @@ public class VideoClub {
         catch (IOException | ParseException e) {
             this.errorState = ErrorState.DB_NOT_LOADED;
         }
-    }
-
-    public void save (LambdaUser lambdaUser) {
-        HashMap<String, String> userDetails = new HashMap<String, String>();
-        Rental rental = lambdaUser.getCurrentRental();
-        userDetails.put("currentRental", rental == null ? "" : rental.getRentalId().toString());
-        userDetails.put("creditCard", Long.toString(lambdaUser.getCreditCard()));
-
-        userDetails.put("account", this.LAMBDA_USER_ACCOUNT);
-        userDetails.put("UUID", lambdaUser.getUserId().toString());
-
-        this.persistence.saveUser(userDetails);
     }
 
     private void save (Subscriber subscriber, HashMap<String, String> userDetails) {
@@ -56,7 +45,7 @@ public class VideoClub {
         subscriber.getHistory().forEach((Rental rental) -> {joinedHistory.add(rental.getRentalId().toString());});
 
         final StringJoiner joinedMoviesRestrained = new StringJoiner(",");
-        subscriber.getMoviesRestrained().forEach((Movie movie) -> {joinedMoviesRestrained.add(movie.getMovieId().toString());});
+        subscriber.getMoviesRestrained().forEach((String movie) -> {joinedMoviesRestrained.add(movie);});
 
         userDetails.put("name", subscriber.getName());
         userDetails.put("firstName", subscriber.getFirstName());
@@ -67,7 +56,7 @@ public class VideoClub {
         userDetails.put("history", joinedHistory.toString());
         userDetails.put("moviesRestrained", joinedMoviesRestrained.toString());
         userDetails.put("maxMovieRented", Integer.toString(subscriber.getMaxMovieRented()));
-        userDetails.put("UUID", subscriber.getUserId().toString());
+        userDetails.put("UUID", subscriber.getSubscriberId().toString());
 
         this.persistence.saveUser(userDetails);
     }
@@ -76,7 +65,7 @@ public class VideoClub {
         HashMap<String, String> userDetails = new HashMap<String, String>();
 
         final StringJoiner childrenIds = new StringJoiner(",");
-        adultSubscriber.getChildren().forEach((ChildSubscriber child) -> {childrenIds.add(child.getUserId().toString());});
+        adultSubscriber.getChildren().forEach((ChildSubscriber child) -> {childrenIds.add(child.getSubscriberId().toString());});
 
         userDetails.put("account", this.ADULT_SUBSCRIBER_ACCOUNT);
         userDetails.put("children", childrenIds.toString());
@@ -88,7 +77,7 @@ public class VideoClub {
         HashMap<String, String> userDetails = new HashMap<String, String>();
 
         userDetails.put("account", this.CHILD_SUBSCRIBER_ACCOUNT);
-        userDetails.put("parent", childSubscriber.getParent().getUserId().toString());
+        userDetails.put("parent", childSubscriber.getParent().getSubscriberId().toString());
 
         this.save(childSubscriber, userDetails);
     }
@@ -128,8 +117,12 @@ public class VideoClub {
         this.technicians.add(technician);
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public LambdaUser getDefaultUser() {
+        return defaultUser;
+    }
+
+    public Subscriber getCurrentSubscriber() {
+        return currentSubscriber;
     }
 
     public int getFineCost() {
@@ -141,22 +134,37 @@ public class VideoClub {
     }
 
     public List<String[]> getCyberVideoMovie() {
+        if (currentSubscriber != null) {
+            return convertList(movieLibrary.getCyberVideoMovies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
+        }
         return convertList(movieLibrary.getCyberVideoMovies());
     }
 
     public List<String[]> getAvailableMovies() {
+        if (currentSubscriber != null) {
+            return convertList(movieLibrary.getAvailableMovies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
+        }
         return convertList(movieLibrary.getAvailableMovies());
     }
 
     public List<String[]> getAl2000Movies() {
+        if (currentSubscriber != null) {
+            return convertList(movieLibrary.getAl2000Movies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
+        }
         return convertList(movieLibrary.getAl2000Movies());
     }
 
     public List<String[]> getMovie(String title) {
+        if (currentSubscriber != null) {
+            return convertList(movieLibrary.getMovie(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), title));
+        }
         return convertList(movieLibrary.getMovie(title));
     }
 
     public List<String[]> getMoviesByCategory(String category) {
+        if (currentSubscriber != null) {
+            return convertList(movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), category));
+        }
         return convertList(movieLibrary.getMovie(category));
     }
 
@@ -179,14 +187,18 @@ public class VideoClub {
     }
 
     public void rentingMovie(Movie m) {
-        if (currentUser != null) {
-            currentUser.rentingMovie(m);
+        Movie available = movieLibrary.getAvailableMovies().get(m.getMovieId());
+        if (defaultUser != null && available != null) {
+            defaultUser.rentingMovie(m);
+            movieLibrary.removeMovie(m);
         }
     }
 
     public void returnMovie(Movie m) {
-        if (currentUser != null) {
-            currentUser.returnMovie(m);
+        Movie available = movieLibrary.getAvailableMovies().get(m.getMovieId());
+        if (defaultUser != null && available == null) {
+            defaultUser.returnMovie(m);
+            movieLibrary.addMovie(m);
         }
     }
 }

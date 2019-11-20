@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class Subscriber extends User {
+    private UUID subscriberId;
     private String name;
     private String firstName;
     private double balanceSubscriberCard;
@@ -14,10 +15,11 @@ public abstract class Subscriber extends User {
     private List<Rental> history;
 
     private List<String> categoryRestrained;
-    private List<Movie> moviesRestrained;
+    private List<String> moviesRestrained;
 
     public Subscriber(UUID subscriberId, long creditCard, String name, String firstName, double balance) {
-        super(subscriberId, creditCard);
+        super(creditCard);
+        this.subscriberId = subscriberId;
         this.name = name;
         this.firstName = firstName;
         this.balanceSubscriberCard = balance;
@@ -40,8 +42,9 @@ public abstract class Subscriber extends User {
     @Override
     public void returnMovie(Movie m) {
         for (Rental r : currentRentedMovies) {
-            if (r.getMovie().equals(m)) {
+            if (r.getMovie().getMovieId() == m.getMovieId()) {
                 r.setReturnDate();
+                history.add(r);
             }
         }
     }
@@ -51,16 +54,16 @@ public abstract class Subscriber extends User {
         currentRentedMovies.add(new Rental(UUID.randomUUID(), m));
     }
 
-    public void restrainMovie(Movie name) {
-        moviesRestrained.add(name);
+    public void restrainMovieByTitle(String title) {
+        moviesRestrained.add(title);
     }
 
-    public void restrainMovie(String category) {
+    public void restrainMovieByCategory(String category) {
         categoryRestrained.add(category);
     }
 
-    public boolean removeRestrainedMovie(Movie name) {
-        return moviesRestrained.remove(name);
+    public boolean removeRestrainedMovie(String title) {
+        return moviesRestrained.remove(title);
     }
 
     public boolean removeRestrainedCategory(String category) {
@@ -95,7 +98,11 @@ public abstract class Subscriber extends User {
         return new ArrayList<String>(categoryRestrained);
     }
 
-    public List<Movie> getMoviesRestrained() {
-        return new ArrayList<Movie>(moviesRestrained);
+    public List<String> getMoviesRestrained() {
+        return new ArrayList<String>(moviesRestrained);
+    }
+
+    public UUID getSubscriberId() {
+        return subscriberId;
     }
 }
