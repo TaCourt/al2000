@@ -95,13 +95,12 @@ public class FilmLibrary{
         return availableMovies;
     }
 
-
-    public Map<Long, Movie> getMovie(List<String> restrainedCategory, List<String> restrainedMovie, String title) {
+    public Map<Long, Movie> getMovieFromTitle(List<String> restrainedCategory, List<String> restrainedMovie, String title) {
         Map<Long, Movie> toReturn = search("titre", title);
         return filter(restrainedCategory, restrainedMovie, toReturn);
     }
 
-    public Map<Long, Movie> getMovie(String title) {
+    public Map<Long, Movie> getMovieFromTitle(String title) {
         return search("titre", title);
     }
 
@@ -109,6 +108,10 @@ public class FilmLibrary{
     public Map<Long, Movie> getMovieByCategory(List<String> restrainedCategory, List<String> restrainedMovie, String category) {
         Map<Long, Movie> toReturn = search("categorie", category);
         return filter(restrainedCategory, restrainedMovie, toReturn);
+    }
+
+    public Movie getMovie(String id) {
+        return al2000Movies.get(Long.parseLong(id));
     }
 
     public Map<Long, Movie> getMovieByCategory(String category) {
@@ -143,8 +146,5 @@ public class FilmLibrary{
     public List<String> getCategoriesSet() {
         return this.categoriesSet;
     }
-
-
-
 
 }

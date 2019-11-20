@@ -1,6 +1,5 @@
 package src.core;
 
-
 public abstract class User {
 
     private long creditCard;

@@ -15,6 +15,9 @@ public class Rental {
         this.movie = movie;
         this.rentalId = rentalId;
     }
+    public Rental ( Movie movie) {
+        this(UUID.randomUUID(), movie);
+    }
     public UUID getRentalId () {
         return this.rentalId;
     }

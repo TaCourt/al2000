@@ -7,6 +7,9 @@ import src.persistence.Persistence;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class VideoClub {
     public enum ErrorState {DB_NOT_LOADED};
@@ -156,16 +159,16 @@ public class VideoClub {
 
     public List<String[]> getMovie(String title) {
         if (currentSubscriber != null) {
-            return convertList(movieLibrary.getMovie(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), title));
+            return convertList(movieLibrary.getMovieFromTitle(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), title));
         }
-        return convertList(movieLibrary.getMovie(title));
+        return convertList(movieLibrary.getMovieFromTitle(title));
     }
 
     public List<String[]> getMoviesByCategory(String category) {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), category));
         }
-        return convertList(movieLibrary.getMovie(category));
+        return convertList(movieLibrary.getMovieFromTitle(category));
     }
 
     public List<String[]> convertList(Map<Long, Movie> map) {
@@ -200,5 +203,98 @@ public class VideoClub {
             defaultUser.returnMovie(m);
             movieLibrary.addMovie(m);
         }
+
     }
+
+    public void returnMovie(String idMovieReturned) {
+        Movie m = movieLibrary.getMovie(idMovieReturned);
+        if (currentSubscriber != null) {
+            currentSubscriber.returnMovie(m);
+        }
+
+    }
+
+
+    public String[] login(String numCarte){
+//        User user = loadUser(numCarte);
+//        String[] infosUser = new String[2];
+//
+//        if( user == null){
+//            infosUser[1] = "";
+//            infosUser[0] = "";
+//        }else{
+//            infosUser[0] = user.prenom;
+//            infosUser[1] = user.nom;
+//        }
+//        return infosUser;
+        return new String[3];
+    }
+
+
+    public boolean exists(String identifiant){
+        return true;
+    }
+
+    public String[] getMovieFromTitle(String title){
+//        Movie movie = movieList.get(0); // recherche de la movie
+//        String [] movieData = new String[9];
+//        movieData[0] = movie.affiche;
+//        movieData[1] = movie.titre;
+//        movieData[2] = movie.categorie;
+//        movieData[3] = movie.synopsis;
+//        movieData[4] = movie.duree.toString();
+//        movieData[5] = movie.langue;
+//        movieData[6] = movie.acteurs;
+//        movieData[7] = movie.realisateurs;
+//        movieData[8] = movie.identifiant;
+        return new String[1];
+    }
+    public void rentMovie(String identifiant){
+
+    }
+
+    public List<String> getCategories(){
+        List<String> categories = new LinkedList<>();
+        categories.add("Horreur");
+        categories.add("Fantastique");
+        categories.add("Comédie");
+        categories.add("Drame");
+        categories.add("Pour Adulte");
+        return categories;
+    }
+
+    public List<String[]> getMoviesOfCategory(String category){
+        List<String[]> movieListData = new LinkedList<>();
+//        for( Movie movie : movieList){
+//            String [] movieData = new String[9];
+//            movieData[0] = movie.affiche;
+//            movieData[1] = movie.titre;
+//            movieData[2] = movie.categorie;
+//            movieData[3] = movie.synopsis;
+//            movieData[4] = movie.duree.toString();
+//            movieData[5] = movie.langue;
+//            movieData[6] = movie.acteurs;
+//            movieData[7] = movie.realisateurs;
+//            movieData[8] = movie.identifiant;
+//            movieListData.add(movieData);
+//        }
+        return movieListData;
+    }
+
+
+    public void restrictCategory(String chosenCategory) {
+
+    }
+
+    public void createNewSubscriber(String[] userData) {
+//        userData[0] = nom
+//        userData[1] = prenom
+//        userData[2] = num CB
+    }
+
+    public void createNewChildSubscriber(String[] userData) {
+//        userData[0] = nom
+//        userData[1] = prenom
+    }
+
 }
