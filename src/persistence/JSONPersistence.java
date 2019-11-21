@@ -18,18 +18,12 @@ public class JSONPersistence implements Persistence {
     private JSONObject SUBSCRIBER_JSON_DB;
     private JSONObject MOVIE_JSON_DB;
 
-    /*
-     *************************
-     * TODO ?
-     *  Gérer les exceptions (de getJSONParser) pour faire remonter à l'user à travers l'IHM
-     *  (Si ça échoue, aucun moyen d'utiliser la machine car pas de DB)
-     */
-    public JSONPersistence () throws FileNotFoundException, IOException, ParseException {
+    public JSONPersistence () throws IOException, ParseException {
         this.SUBSCRIBER_JSON_DB = this.getJSONParser(this.SUBSCRIBER_DB);
         this.MOVIE_JSON_DB = this.getJSONParser(this.MOVIE_DB);
     }
 
-    private JSONObject getJSONParser (String db) throws FileNotFoundException, IOException, ParseException {
+    private JSONObject getJSONParser (String db) throws IOException, ParseException {
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
 

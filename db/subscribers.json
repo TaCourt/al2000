@@ -21,14 +21,14 @@
     },
     "a6c21b11-a26f-4529-895d-8ff84f1398a7": {
         "moviesRestrained": "",
-        "firstName": "",
+        "firstName": "Jean",
         "balanceSubscriberCard": "0.0",
-        "currentRentedMovies": "",
+        "currentRentedMovies": "0",
         "categoryRestrained": "",
         "children": "97083b2d-3b6c-4cd1-abaf-d777b27e70c2,5a60add7-eecd-4629-b4eb-98922951dc7b",
-        "name": "",
+        "name": "Paul",
         "history": "",
-        "creditCard": "0",
+        "creditCard": "0123456789",
         "maxMovieRented": "3",
         "UUID": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
         "account": "adultSubscriber"
