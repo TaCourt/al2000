@@ -5,6 +5,6 @@ import java.util.UUID;
 public class LambdaUserFactory extends UserFactory {
     @Override
     public User makeUser() {
-        return new LambdaUser(UUID.randomUUID(), 0);
+        return new LambdaUser(0);
     }
 }

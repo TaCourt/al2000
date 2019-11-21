@@ -19,15 +19,15 @@ public class AdultSubscriber extends Subscriber {
         return children.remove(child);
     }
 
-    public void restrainChildMovie(ChildSubscriber c, Movie m) {
+    /*public void restrainChildMovie(ChildSubscriber c, Movie m) {
         if (children.contains(c)) {
-            c.restrainMovie(m);
+            c.restrainMovieByTitle(m.getTitle());
         }
-    }
+    }*/
 
     public void restrainChildMovie(ChildSubscriber c, String category) {
         if (children.contains(c)) {
-            c.restrainMovie(category);
+            c.restrainMovieByTitle(category);
         }
     }
 

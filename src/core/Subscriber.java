@@ -52,6 +52,7 @@ public abstract class Subscriber extends User {
     public void addRental(Movie m) {
         currentRentedMovies.add(new Rental(UUID.randomUUID(), m));
     }
+    public void addRental(Rental r) { currentRentedMovies.add(r); }
 
     public void restrainMovieByTitle(String title) {
         moviesRestrained.add(title);
