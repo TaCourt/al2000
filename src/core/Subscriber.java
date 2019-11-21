@@ -3,7 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class Subscriber extends User {
+public abstract class Subscriber {
+    private long creditCard;
     private UUID subscriberId;
     private String name;
     private String firstName;
@@ -17,7 +18,7 @@ public abstract class Subscriber extends User {
     private List<String> moviesRestrained;
 
     public Subscriber(UUID subscriberId, long creditCard, String name, String firstName, double balance) {
-        super(creditCard);
+        this.creditCard = creditCard;
         this.subscriberId = subscriberId;
         this.name = name;
         this.firstName = firstName;
@@ -29,7 +30,6 @@ public abstract class Subscriber extends User {
         this.history = new ArrayList<>();
     }
 
-    @Override
     public void rentingMovie(Movie m) {
         if (currentRentedMovies.size() != maxMovieRented) {
             addRental(m);
@@ -38,7 +38,6 @@ public abstract class Subscriber extends User {
         }
     }
 
-    @Override
     public void returnMovie(Movie m) {
         for (Rental r : currentRentedMovies) {
             if (r.getMovie().getMovieId() == m.getMovieId()) {
@@ -105,6 +104,8 @@ public abstract class Subscriber extends User {
     public UUID getSubscriberId() {
         return subscriberId;
     }
+
+    public long getCreditCard () { return this.creditCard; }
 
     public void restrainChildMovieByTitle(ChildSubscriber c, String title) {
         System.out.println("Il faut avoir des enfants pour restreindre les films d'un enfant");

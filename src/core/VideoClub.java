@@ -11,11 +11,12 @@ public class VideoClub {
     private UserInterface gui;
 
     private List<Technician> technicians;
-    private UserFactory factory;
+    private SubscriberFactory factory;
     private FilmLibrary movieLibrary;
-    private LambdaUser defaultUser;
     private Subscriber currentSubscriber;
     private int fineCost;
+    private Map<Long, Rental> currentNonSubRentals;
+    private Map<Long, Rental> historyNonSubRentals;
 
     public VideoClub() {
     }
@@ -55,10 +56,6 @@ public class VideoClub {
 
     public void addTechnicians(Technician technician) {
         this.technicians.add(technician);
-    }
-
-    public LambdaUser getDefaultUser() {
-        return defaultUser;
     }
 
     public Subscriber getCurrentSubscriber() {
@@ -129,19 +126,31 @@ public class VideoClub {
 
     public void rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
-        if (currentSubscriber != null) {
+        if (currentSubscriber != null && m != null) {
             currentSubscriber.rentingMovie(m);
-        } else if (defaultUser != null) {
-            defaultUser.rentingMovie(m);
         }
     }
 
-    public void returnMovie(Movie m) {
-        Movie available = movieLibrary.getAvailableMovies().get(m.getMovieId());
-        if (defaultUser != null && available == null) {
-            defaultUser.returnMovie(m);
-            movieLibrary.addMovie(m);
+    public void rentMovie(String idMovie, long creditCard) {
+        if (currentNonSubRentals.get(creditCard) != null) {
+            System.out.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau svp");
         }
+
+        Movie m = movieLibrary.getMovie(idMovie);
+        if (m != null) {
+            Rental rental = new Rental(m);
+            currentNonSubRentals.put(creditCard, rental);
+            this.dao.saveRental(rental);
+            movieLibrary.removeMovie(m);
+        }
+    }
+
+    public void returnMovie(String idMovieReturned, long creditCard) {
+        Movie m = movieLibrary.getMovie(idMovieReturned);
+        Rental oldRental = currentNonSubRentals.get(creditCard);
+        currentNonSubRentals.remove(creditCard);
+        historyNonSubRentals.put(creditCard, oldRental);
+        movieLibrary.addMovie(m);
 
     }
 
@@ -149,8 +158,8 @@ public class VideoClub {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         if (currentSubscriber != null) {
             currentSubscriber.returnMovie(m);
+            movieLibrary.addMovie(m);
         }
-
     }
 
 
@@ -213,13 +222,13 @@ public class VideoClub {
 
     public void createNewSubscriber(String[] userData) {
         AdultSubscriberFactory userFactory = new AdultSubscriberFactory();
-        User user = userFactory.makeUser(userData[0], userData[1], userData[2]);
-        this.dao.save((AdultSubscriber) user);
+        Subscriber subscriber = userFactory.makeUser(userData[0], userData[1], userData[2]);
+        this.dao.save((AdultSubscriber) subscriber);
     }
 
     public void createNewChildSubscriber(String[] userData) {
         ChildSubscriberFactory userFactory = new ChildSubscriberFactory();
-        User user = userFactory.makeUser(userData[0], userData[1], (AdultSubscriber) currentSubscriber);
-        this.dao.save((AdultSubscriber) user);
+        Subscriber subscriber = userFactory.makeUser(userData[0], userData[1], (AdultSubscriber) currentSubscriber);
+        this.dao.save((ChildSubscriber) subscriber);
     }
 }
