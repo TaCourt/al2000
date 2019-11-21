@@ -15,7 +15,7 @@ public class JSONPersistence implements Persistence {
     private final String SUBSCRIBER_DB = this.filePath.concat("/db/subscribers.json");
     private final String MOVIE_DB = this.filePath.concat("/db/movies.json");
     private final String AVAILABLE_MOVIE_DB = this.filePath.concat("/db/available_movies.json");
-    private final String RENTAL_DB = this.filePath.concat("/db/rental.json");
+    private final String RENTAL_DB = this.filePath.concat("/db/rentals.json");
 
     private JSONObject SUBSCRIBER_JSON_DB;
     private JSONObject MOVIE_JSON_DB;
@@ -55,8 +55,32 @@ public class JSONPersistence implements Persistence {
 
     @Override
     public void saveMovie(HashMap<String, String> movieDetails) {
-        this.SUBSCRIBER_JSON_DB.put(movieDetails.get("id"), movieDetails);
+        this.MOVIE_JSON_DB.put(movieDetails.get("id"), movieDetails);
         this.saveToFile(this.MOVIE_DB, this.MOVIE_JSON_DB);
+    }
+
+    @Override
+    public void saveAvailableMovie (String id, boolean isAvailable) {
+        // not XOR
+        if (!(isAvailable ^ this.AVAILABLE_MOVIE_JSON_DB.get(id) != null)) return;
+
+        if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, "");
+        else if (this.AVAILABLE_MOVIE_JSON_DB.get("id") != null) this.AVAILABLE_MOVIE_JSON_DB.remove(id);
+
+        this.saveToFile(this.AVAILABLE_MOVIE_DB, this.AVAILABLE_MOVIE_JSON_DB);
+    };
+
+    public String[] getAvailableMovies () {
+        /*String[] availableMovies = new String[this.AVAILABLE_MOVIE_JSON_DB.keySet().size()];
+
+        for (int i = 0; i < this.AVAILABLE_MOVIE_JSON_DB.keySet().size(); i++) {
+            availableMovies[i] = (String) this.AVAILABLE_MOVIE_JSON_DB.get(Integer.toString(i));
+        }
+
+        return availableMovies;*/
+
+        // TODO
+        return null;
     }
 
     @Override

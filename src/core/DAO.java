@@ -2,9 +2,7 @@ package src.core;
 
 import src.persistence.Persistence;
 
-import java.util.HashMap;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 public class DAO {
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
@@ -165,6 +163,8 @@ public class DAO {
     public void saveMovie (Movie movie) {
         HashMap<String, String> movieDetails = new HashMap<String, String>();
 
+        boolean isAvailable = movie.isAvailable();
+
         movieDetails.put("id", movie.getMovieId().toString());
         movieDetails.put("category", movie.getCategory());
         movieDetails.put("title", movie.getTitle());
@@ -174,11 +174,12 @@ public class DAO {
         movieDetails.put("director", movie.getDirector());
         movieDetails.put("synopsis", movie.getSynopsis());
         movieDetails.put("duration", movie.getDuration().toString());
-        movieDetails.put("available", Boolean.toString(movie.isAvailable()));
+        movieDetails.put("available", Boolean.toString(isAvailable));
 
+        this.persistence.saveAvailableMovie(movie.getMovieId().toString(), isAvailable);
         this.persistence.saveMovie(movieDetails);
     }
-    public Movie loadMovie(String id) {
+    public Movie loadMovie (String id) {
         HashMap<String, String> movieDetails = this.persistence.loadSubscriber(id);
 
         if (movieDetails == null) {
@@ -195,6 +196,16 @@ public class DAO {
             movieDetails.get("actor"),
             movieDetails.get("director"),
             false);
+    }
+    public List<Movie> loadAvailableMovies () {
+        List<Movie> movies = new ArrayList<Movie>();
+        String[] availableMovies = this.persistence.getAvailableMovies();
+
+        for (String movieId: availableMovies) {
+            movies.add(this.loadMovie(movieId));
+        }
+
+        return movies;
     }
 
     public Rental loadRental(String currentRentalId) {
