@@ -2,8 +2,10 @@ package src.core;
 
 import java.util.List;
 import org.json.simple.parser.ParseException;
+import src.gui.ConsoleUserInterface;
 import src.persistence.JSONPersistence;
 import src.persistence.Persistence;
+import src.gui.UserInterface;
 
 import java.io.IOException;
 import java.util.*;
@@ -16,6 +18,7 @@ public class VideoClub {
     private ErrorState errorState = null;
 
     private Persistence persistence;
+    private UserInterface gui;
 
     private final String LAMBDA_USER_ACCOUNT = "lambdaUser";
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
@@ -34,6 +37,12 @@ public class VideoClub {
         catch (IOException | ParseException e) {
             this.errorState = ErrorState.DB_NOT_LOADED;
         }
+
+        gui = new ConsoleUserInterface(this);
+    }
+
+    public void launch(){
+
     }
 
     public void save (LambdaUser lambdaUser) {
@@ -181,7 +190,8 @@ public class VideoClub {
         return toReturn;
     }
 
-    public void rentingMovie(Movie m) {
+    public void rentMovie(String idMovie) {
+        Movie m = movieLibrary.getMovie(idMovie);
         if (currentUser != null) {
             currentUser.rentingMovie(m);
         }
@@ -220,7 +230,12 @@ public class VideoClub {
 
 
     public boolean exists(String identifiant){
-        return true;
+        Movie movie = movieLibrary.getMovie(identifiant);
+        if( movie == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public String[] getMovieFromTitle(String title){
@@ -237,18 +252,9 @@ public class VideoClub {
 //        movieData[8] = movie.identifiant;
         return new String[1];
     }
-    public void rentMovie(String identifiant){
-
-    }
 
     public List<String> getCategories(){
-        List<String> categories = new LinkedList<>();
-        categories.add("Horreur");
-        categories.add("Fantastique");
-        categories.add("Comédie");
-        categories.add("Drame");
-        categories.add("Pour Adulte");
-        return categories;
+        return movieLibrary.getCategoriesSet();
     }
 
     public List<String[]> getMoviesOfCategory(String category){
@@ -271,18 +277,20 @@ public class VideoClub {
 
 
     public void restrictCategory(String chosenCategory) {
-
+        Subscriber user = (Subscriber) this.getCurrentUser();
+        user.restrainMovie(chosenCategory);
     }
 
     public void createNewSubscriber(String[] userData) {
-//        userData[0] = nom
-//        userData[1] = prenom
-//        userData[2] = num CB
+        AdultSubscriberFactory userFactory = new AdultSubscriberFactory();
+        User user =  userFactory.makeUser(userData[0],userData[1],userData[2]);
+        save( (AdultSubscriber) user);
     }
 
     public void createNewChildSubscriber(String[] userData) {
-//        userData[0] = nom
-//        userData[1] = prenom
+        ChildSubscriberFactory userFactory = new ChildSubscriberFactory();
+        User user =  userFactory.makeUser(userData[0],userData[1], (AdultSubscriber) currentUser);
+        save( (AdultSubscriber) user);
     }
 
 }
