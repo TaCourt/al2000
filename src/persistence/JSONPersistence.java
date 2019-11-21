@@ -55,8 +55,32 @@ public class JSONPersistence implements Persistence {
 
     @Override
     public void saveMovie(HashMap<String, String> movieDetails) {
-        this.SUBSCRIBER_JSON_DB.put(movieDetails.get("id"), movieDetails);
+        this.MOVIE_JSON_DB.put(movieDetails.get("id"), movieDetails);
         this.saveToFile(this.MOVIE_DB, this.MOVIE_JSON_DB);
+    }
+
+    @Override
+    public void saveAvailableMovie (String id, boolean isAvailable) {
+        // not XOR
+        if (!(isAvailable ^ this.AVAILABLE_MOVIE_JSON_DB.get(id) != null)) return;
+
+        if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, "");
+        else if (this.AVAILABLE_MOVIE_JSON_DB.get("id") != null) this.AVAILABLE_MOVIE_JSON_DB.remove(id);
+
+        this.saveToFile(this.AVAILABLE_MOVIE_DB, this.AVAILABLE_MOVIE_JSON_DB);
+    };
+
+    public String[] getAvailableMovies () {
+        /*String[] availableMovies = new String[this.AVAILABLE_MOVIE_JSON_DB.keySet().size()];
+
+        for (int i = 0; i < this.AVAILABLE_MOVIE_JSON_DB.keySet().size(); i++) {
+            availableMovies[i] = (String) this.AVAILABLE_MOVIE_JSON_DB.get(Integer.toString(i));
+        }
+
+        return availableMovies;*/
+
+        // TODO
+        return null;
     }
 
     @Override

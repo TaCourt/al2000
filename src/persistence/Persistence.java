@@ -18,4 +18,7 @@ public interface Persistence {
 
     void forEachSubscriber (BiConsumer<String, HashMap<String, String>> callback);
 
+    void saveAvailableMovie (String toString, boolean remove);
+
+    String[] getAvailableMovies();
 }
