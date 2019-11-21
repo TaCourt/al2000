@@ -1,12 +1,10 @@
 package src.core;
 
-import java.util.List;
+import java.util.*;
+
 import src.gui.ConsoleUserInterface;
 import src.persistence.Persistence;
 import src.gui.UserInterface;
-
-import java.util.LinkedList;
-import java.util.Map;
 
 public class VideoClub {
     private DAO dao;
@@ -20,19 +18,39 @@ public class VideoClub {
     private int fineCost;
 
     public VideoClub() {
-        gui = new ConsoleUserInterface(this);
     }
+
     public void setPersistence(Persistence persistence) {
         this.dao = new DAO();
         this.dao.setPersistence(persistence);
     }
 
-    public void launch() {
-
+    public void setGui(UserInterface gui){
+        this.gui = gui;
     }
 
-    public void logIn (String subscriberId) {
-        this.currentSubscriber = this.dao.loadSubscriber(subscriberId);
+    public void launch() {
+        setGui(new ConsoleUserInterface(this));
+    }
+
+    public String[] logIn (String numCarte) {
+        this.currentSubscriber = this.dao.loadSubscriber(numCarte);
+        String[] infosUser = new String[2];
+
+        if( currentSubscriber == null){
+            infosUser[1] = "";
+            infosUser[0] = "";
+        }else{
+            infosUser[0] = currentSubscriber.getFirstName();
+            infosUser[1] = currentSubscriber.getName();
+        }
+        return infosUser;
+    }
+
+    public void logOut (){
+        this.currentSubscriber = null;
+        LambdaUserFactory lUserFac = new LambdaUserFactory();
+        this.defaultUser = (LambdaUser) lUserFac.makeUser();
     }
 
     public void addTechnicians(Technician technician) {
@@ -136,20 +154,6 @@ public class VideoClub {
     }
 
 
-    public String[] login(String numCarte) {
-//        User user = loadUser(numCarte);
-//        String[] infosUser = new String[2];
-//
-//        if( user == null){
-//            infosUser[1] = "";
-//            infosUser[0] = "";
-//        }else{
-//            infosUser[0] = user.prenom;
-//            infosUser[1] = user.nom;
-//        }
-//        return infosUser;
-        return new String[3];
-    }
 
 
     public boolean exists(String identifiant) {
@@ -161,19 +165,16 @@ public class VideoClub {
         }
     }
 
-    public String[] getMovieFromTitle(String title) {
-//        Movie movie = movieList.get(0); // recherche de la movie
-//        String [] movieData = new String[9];
-//        movieData[0] = movie.affiche;
-//        movieData[1] = movie.titre;
-//        movieData[2] = movie.categorie;
-//        movieData[3] = movie.synopsis;
-//        movieData[4] = movie.duree.toString();
-//        movieData[5] = movie.langue;
-//        movieData[6] = movie.acteurs;
-//        movieData[7] = movie.realisateurs;
-//        movieData[8] = movie.identifiant;
-        return new String[1];
+    public List<String[]> getMovieFromTitle(String title) {
+        Map<Long, Movie> list = movieLibrary.getMovieFromTitle(title);
+        List<String[]> results = new LinkedList<>();
+        for (Long key : list.keySet()) {
+            Movie currentMovie = list.get(key);
+            String[] movieData= convertMovieToStringTab(currentMovie);
+            results.add(movieData);
+        }
+
+        return results;
     }
 
     public List<String> getCategories() {
@@ -181,21 +182,28 @@ public class VideoClub {
     }
 
     public List<String[]> getMoviesOfCategory(String category) {
-        List<String[]> movieListData = new LinkedList<>();
-//        for( Movie movie : movieList){
-//            String [] movieData = new String[9];
-//            movieData[0] = movie.affiche;
-//            movieData[1] = movie.titre;
-//            movieData[2] = movie.categorie;
-//            movieData[3] = movie.synopsis;
-//            movieData[4] = movie.duree.toString();
-//            movieData[5] = movie.langue;
-//            movieData[6] = movie.acteurs;
-//            movieData[7] = movie.realisateurs;
-//            movieData[8] = movie.identifiant;
-//            movieListData.add(movieData);
-//        }
-        return movieListData;
+        Map<Long, Movie> list = movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(),currentSubscriber.getMoviesRestrained(),category);
+        List<String[]> results = new LinkedList<>();
+        for (Long key : list.keySet()) {
+            Movie currentMovie = list.get(key);
+            String[] movieData= convertMovieToStringTab(currentMovie);
+            results.add(movieData);
+        }
+        return results;
+    }
+
+    private String[] convertMovieToStringTab(Movie movie){
+        String [] movieData = new String[9];
+        movieData[0] = movie.getAffiche();
+        movieData[1] = movie.getTitle();
+        movieData[2] = movie.getCategory();
+        movieData[3] = movie.getSynopsis();
+        movieData[4] = movie.getDuration().toString();
+        movieData[5] = movie.getLanguage();
+        movieData[6] = movie.getActor();
+        movieData[7] = movie.getDirector();
+        movieData[8] = movie.getMovieId().toString();
+        return movieData;
     }
 
 
