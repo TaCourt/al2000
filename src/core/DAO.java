@@ -161,12 +161,43 @@ public class DAO {
         }
     }
 
-    private Movie loadMovie(String movieRestrainedId) {
-        // TODO
-        return null;
+
+    public void saveMovie (Movie movie) {
+        HashMap<String, String> movieDetails = new HashMap<String, String>();
+
+        movieDetails.put("id", movie.getMovieId().toString());
+        movieDetails.put("category", movie.getCategory());
+        movieDetails.put("title", movie.getTitle());
+        movieDetails.put("language", movie.getLanguage());
+        movieDetails.put("actor", movie.getActor());
+        movieDetails.put("affiche", movie.getAffiche());
+        movieDetails.put("director", movie.getDirector());
+        movieDetails.put("synopsis", movie.getSynopsis());
+        movieDetails.put("duration", movie.getDuration().toString());
+        movieDetails.put("available", Boolean.toString(movie.isAvailable()));
+
+        this.persistence.saveMovie(movieDetails);
+    }
+    public Movie loadMovie(String id) {
+        HashMap<String, String> movieDetails = this.persistence.loadSubscriber(id);
+
+        if (movieDetails == null) {
+            return null;
+        }
+
+        return new Movie(Long.parseLong(movieDetails.get("id")),
+            movieDetails.get("affiche"),
+            movieDetails.get("titre"),
+            movieDetails.get("category"),
+            movieDetails.get("synopsis"),
+            Integer.parseInt(movieDetails.get("duration")),
+            movieDetails.get("langue"),
+            movieDetails.get("actor"),
+            movieDetails.get("director"),
+            false);
     }
 
-    private Rental loadRental(String currentRentalId) {
+    public Rental loadRental(String currentRentalId) {
         // TODO
         return null;
     }

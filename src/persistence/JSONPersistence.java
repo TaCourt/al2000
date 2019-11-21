@@ -14,13 +14,19 @@ public class JSONPersistence implements Persistence {
     private final String filePath = new File("").getAbsolutePath();
     private final String SUBSCRIBER_DB = this.filePath.concat("/db/subscribers.json");
     private final String MOVIE_DB = this.filePath.concat("/db/movies.json");
+    private final String AVAILABLE_MOVIE_DB = this.filePath.concat("/db/available_movies.json");
+    private final String RENTAL_DB = this.filePath.concat("/db/rental.json");
 
     private JSONObject SUBSCRIBER_JSON_DB;
     private JSONObject MOVIE_JSON_DB;
+    private JSONObject AVAILABLE_MOVIE_JSON_DB;
+    private JSONObject RENTAL_JSON_DB;
 
     public JSONPersistence () throws IOException, ParseException {
         this.SUBSCRIBER_JSON_DB = this.getJSONParser(this.SUBSCRIBER_DB);
         this.MOVIE_JSON_DB = this.getJSONParser(this.MOVIE_DB);
+        this.AVAILABLE_MOVIE_JSON_DB = this.getJSONParser(this.AVAILABLE_MOVIE_DB);
+        this.RENTAL_JSON_DB = this.getJSONParser(this.RENTAL_DB);
     }
 
     private JSONObject getJSONParser (String db) throws IOException, ParseException {
@@ -43,18 +49,40 @@ public class JSONPersistence implements Persistence {
 
     @Override
     public void saveSubscriber(HashMap<String, String> userDetails) {
-        JSONObject JSONNUserDetails = new JSONObject(userDetails);
-
         this.SUBSCRIBER_JSON_DB.put(userDetails.get("UUID"), userDetails);
         this.saveToFile(this.SUBSCRIBER_DB, this.SUBSCRIBER_JSON_DB);
     }
 
+    @Override
+    public void saveMovie(HashMap<String, String> movieDetails) {
+        this.SUBSCRIBER_JSON_DB.put(movieDetails.get("id"), movieDetails);
+        this.saveToFile(this.MOVIE_DB, this.MOVIE_JSON_DB);
+    }
+
+    @Override
+    public void saveRental(HashMap<String, String> rentalDetails) {
+        this.RENTAL_JSON_DB.put(rentalDetails.get("id"), rentalDetails);
+        this.saveToFile(this.RENTAL_DB, this.RENTAL_JSON_DB);
+    }
+
     public HashMap<String, String> loadSubscriber(String id) {
-        Object[] ids = this.SUBSCRIBER_JSON_DB.keySet().toArray();
+        return this.loadData(this.SUBSCRIBER_JSON_DB, id);
+    }
+
+    public HashMap<String, String> loadMovie(String id) {
+        return this.loadData(this.MOVIE_JSON_DB, id);
+    }
+
+    public HashMap<String, String> loadRental(String id) {
+        return this.loadData(this.RENTAL_JSON_DB, id);
+    }
+
+    private HashMap<String, String> loadData(JSONObject db, String id) {
+        Object[] ids = db.keySet().toArray();
 
         for (int i = 0; i < ids.length; i++) {
             if (id.equals(ids[i])) {
-                return (HashMap<String, String>) this.SUBSCRIBER_JSON_DB.get(id);
+                return (HashMap<String, String>) db.get(id);
             }
         }
 

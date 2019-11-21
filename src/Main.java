@@ -32,4 +32,19 @@ class Main {
         System.out.println("maxMovieRented : " + Integer.toString(u.getMaxMovieRented()));
         System.out.println("UUID : " + u.getSubscriberId().toString());
     }
+
+    public static void saveMovie (VideoClub v) throws IOException, ParseException {
+        DAO dao = new DAO();
+        dao.setPersistence(new JSONPersistence());
+
+        dao.saveMovie(new Movie((long) 0, "jsp ckec", "Le Projet", "COO", "ça change souvent",
+                190, "Français", "MG, FC, TC, LB", "Les mêmes", true));
+
+        dao.saveMovie(new Movie((long) 1, "un autre", "Le Projet - La suite", "COO", "ça change souvent",
+                160, "Français", "MG, FC, TC, LB", "Les mêmes", false));
+
+
+        dao.saveMovie(new Movie((long) 2, "jsp ckec", "Le Projet - La suite 2", "COO", "ça change souvent",
+                120, "Anglais", "MG, FC, TC, LB", "Les mêmes", false));
+    }
 }
