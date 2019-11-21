@@ -361,8 +361,7 @@ public class VideoClub {
 
 
     public void restrictCategory(String chosenCategory) {
-        Subscriber sub = currentSubscriber;
-        sub.restrainMovieByCategory(chosenCategory);
+        currentSubscriber.restrainMovieByCategory(chosenCategory);
     }
 
     public void createNewSubscriber(String[] userData) {
