@@ -92,9 +92,8 @@ public class ConsoleUserInterface implements UserInterface {
 
     @Override
     public void signIn() {
-        //TODO fixer les appels videoclub
         String numCarte = printSignInPage();
-        String[] infosUser = videoClub.login(numCarte);
+        String[] infosUser = videoClub.logIn(numCarte);
         redirectFromLoginPage(infosUser); // set isConnected, prenom et nom
     }
 
@@ -148,10 +147,11 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
 
-    public void signOut(){ // TODO a finir coté videoclub après pull
+    public void signOut(){
         this.prenom = "";
         this.nom = "";
         this.isConnected = false;
+        videoClub.logOut();
         redirectToMainMenu();
     }
 
@@ -160,7 +160,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectFromMainSubscriberMenu(userChoice);
     }
 
-    public void searchACategory(){ //TODO methode getMoviesOfCategory faite dans le prochain pull
+    public void searchACategory(){
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
@@ -173,14 +173,13 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    public void searchAMovie(){ //todo same
+    public void searchAMovie(){
         String searchedTitle = printSearchFromTitle();
-        String[] movie = videoClub.getMovieFromTitle(searchedTitle);
-        if (movie == null) {
-            System.err.println("Aucun film trouvé ayant ce titre, vérifiez l'orthograpge.");
+        List<String[]> movies = videoClub.getMovieFromTitle(searchedTitle);
+        if (movies == null) {
+            System.err.println("Aucun film n'a été trouvé ayant ce titre, vérifiez l'orthograpge.");
         }else{
-            System.out.println("Le film à été trouvé :");
-            printMovie(movie);
+            printMovieList(movies);
         }
 
         redirectToMainMenu();
