@@ -2,8 +2,10 @@ package src.core;
 
 import java.util.List;
 import org.json.simple.parser.ParseException;
+import src.gui.ConsoleUserInterface;
 import src.persistence.JSONPersistence;
 import src.persistence.Persistence;
+import src.gui.UserInterface;
 
 import java.io.IOException;
 import java.util.*;
@@ -16,6 +18,7 @@ public class VideoClub {
     private ErrorState errorState = null;
 
     private Persistence persistence;
+    private UserInterface gui;
 
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
     private final String CHILD_SUBSCRIBER_ACCOUNT = "childSubscriber";
@@ -27,28 +30,41 @@ public class VideoClub {
     private Subscriber currentSubscriber;
     private int fineCost;
 
-    public VideoClub () {
+    public VideoClub() {
         try {
             this.persistence = new JSONPersistence();
-        }
-        catch (IOException | ParseException e) {
+        } catch (IOException | ParseException e) {
             this.errorState = ErrorState.DB_NOT_LOADED;
             System.out.println(e);
         }
+
+        gui = new ConsoleUserInterface(this);
     }
 
-    private void save (Subscriber subscriber, HashMap<String, String> subscriberDetails) {
+    public void launch() {
+
+    }
+
+    private void save(Subscriber subscriber, HashMap<String, String> subscriberDetails) {
         final StringJoiner joinedCategoryRestrained = new StringJoiner(",");
-        subscriber.getCategoryRestrained().forEach((String category) -> {joinedCategoryRestrained.add(category);});
+        subscriber.getCategoryRestrained().forEach((String category) -> {
+            joinedCategoryRestrained.add(category);
+        });
 
         final StringJoiner joinedCurrentRentedMovies = new StringJoiner(",");
-        subscriber.getCurrentRentedMovies().forEach((Rental rental) -> {joinedCurrentRentedMovies.add(rental.getRentalId().toString());});
+        subscriber.getCurrentRentedMovies().forEach((Rental rental) -> {
+            joinedCurrentRentedMovies.add(rental.getRentalId().toString());
+        });
 
         final StringJoiner joinedHistory = new StringJoiner(",");
-        subscriber.getHistory().forEach((Rental rental) -> {joinedHistory.add(rental.getRentalId().toString());});
+        subscriber.getHistory().forEach((Rental rental) -> {
+            joinedHistory.add(rental.getRentalId().toString());
+        });
 
         final StringJoiner joinedMoviesRestrained = new StringJoiner(",");
-        subscriber.getMoviesRestrained().forEach((String movieTitle) -> {joinedMoviesRestrained.add(movieTitle);});
+        subscriber.getMoviesRestrained().forEach((String movieTitle) -> {
+            joinedMoviesRestrained.add(movieTitle);
+        });
 
         subscriberDetails.put("name", subscriber.getName());
         subscriberDetails.put("firstName", subscriber.getFirstName());
@@ -63,18 +79,22 @@ public class VideoClub {
 
         this.persistence.saveSubscriber(subscriberDetails);
     }
-    public void save (AdultSubscriber adultSubscriber) {
+
+    public void save(AdultSubscriber adultSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
         final StringJoiner childrenIds = new StringJoiner(",");
-        adultSubscriber.getChildren().forEach((ChildSubscriber child) -> {childrenIds.add(child.getSubscriberId().toString());});
+        adultSubscriber.getChildren().forEach((ChildSubscriber child) -> {
+            childrenIds.add(child.getSubscriberId().toString());
+        });
 
         subscriberDetails.put("account", this.ADULT_SUBSCRIBER_ACCOUNT);
         subscriberDetails.put("children", childrenIds.toString());
 
         this.save(adultSubscriber, subscriberDetails);
     }
-    public void save (ChildSubscriber childSubscriber) {
+
+    public void save(ChildSubscriber childSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
         subscriberDetails.put("account", this.CHILD_SUBSCRIBER_ACCOUNT);
@@ -83,7 +103,7 @@ public class VideoClub {
         this.save(childSubscriber, subscriberDetails);
     }
 
-    public Subscriber loadSubscriber (String id) {
+    public Subscriber loadSubscriber(String id) {
         HashMap<String, String> subscriberDetails = this.persistence.loadSubscriber(id);
 
         if (subscriberDetails == null) {
@@ -95,8 +115,7 @@ public class VideoClub {
 
         if (this.ADULT_SUBSCRIBER_ACCOUNT.equals(account)) {
             subscriber = this.loadAdultSubscriber(subscriberDetails);
-        }
-        else if (this.CHILD_SUBSCRIBER_ACCOUNT.equals(account)) {
+        } else if (this.CHILD_SUBSCRIBER_ACCOUNT.equals(account)) {
             ChildSubscriber childSubscriber = this.loadChildSubscriber(subscriberDetails);
             loadSubscriber(subscriberDetails, childSubscriber);
 
@@ -106,11 +125,11 @@ public class VideoClub {
         return subscriber;
     }
 
-    private ChildSubscriber loadChildSubscriber (HashMap<String, String> subscriberDetails) {
+    private ChildSubscriber loadChildSubscriber(HashMap<String, String> subscriberDetails) {
         return loadChildSubscriber(subscriberDetails, this.loadAdultSubscriber(subscriberDetails));
     }
 
-    private ChildSubscriber loadChildSubscriber (HashMap<String, String> subscriberDetails, AdultSubscriber parent) {
+    private ChildSubscriber loadChildSubscriber(HashMap<String, String> subscriberDetails, AdultSubscriber parent) {
         String childId = subscriberDetails.get("UUID");
 
         ChildSubscriber childSubscriber = new ChildSubscriber(UUID.fromString(childId),
@@ -122,7 +141,7 @@ public class VideoClub {
         return childSubscriber;
     }
 
-    private AdultSubscriber loadAdultSubscriber (HashMap<String, String> subscriberDetails) {
+    private AdultSubscriber loadAdultSubscriber(HashMap<String, String> subscriberDetails) {
         final String adultSubscriberId = subscriberDetails.get("UUID");
 
         AdultSubscriber adultSubscriber = new AdultSubscriber(UUID.fromString(adultSubscriberId),
@@ -132,7 +151,7 @@ public class VideoClub {
                 Double.parseDouble(subscriberDetails.get("balanceSubscriberCard")));
 
         String[] splitString = subscriberDetails.get("children").split(",");
-        for (String childId: splitString) {
+        for (String childId : splitString) {
             adultSubscriber.addChild(this.loadChildSubscriber(this.persistence.loadSubscriber(childId), adultSubscriber));
         }
         /*this.persistence.forEachSubscriber((_id, _userDetails) -> {
@@ -148,22 +167,22 @@ public class VideoClub {
     private void loadSubscriber(HashMap<String, String> subscriberDetails, Subscriber subscriber) {
         String[] splitString;
         splitString = subscriberDetails.get("categoryRestrained").split(",");
-        for (String category: splitString) {
+        for (String category : splitString) {
             subscriber.restrainMovieByTitle(category);
         }
 
         splitString = subscriberDetails.get("currentRentedMovies").split(",");
-        for (String currentRentalId: splitString) {
+        for (String currentRentalId : splitString) {
             subscriber.addRental(this.loadRental(currentRentalId));
         }
 
         splitString = subscriberDetails.get("history").split(",");
-        for (String oldRentalId: splitString) {
+        for (String oldRentalId : splitString) {
             subscriber.addRental(this.loadRental(oldRentalId));
         }
 
         splitString = subscriberDetails.get("moviesRestrained").split(",");
-        for (String movieRestrainedTitle: splitString) {
+        for (String movieRestrainedTitle : splitString) {
             subscriber.restrainMovieByTitle(movieRestrainedTitle);
         }
     }
@@ -173,7 +192,7 @@ public class VideoClub {
         return null;
     }
 
-    private Rental loadRental (String currentRentalId) {
+    private Rental loadRental(String currentRentalId) {
         // TODO
         return null;
     }
@@ -251,11 +270,13 @@ public class VideoClub {
         return toReturn;
     }
 
-    public void rentingMovie(Movie m) {
-        Movie available = movieLibrary.getAvailableMovies().get(m.getMovieId());
-        if (defaultUser != null && available != null) {
+
+    public void rentMovie(String idMovie) {
+        Movie m = movieLibrary.getMovie(idMovie);
+        if (currentSubscriber != null) {
+            currentSubscriber.rentingMovie(m);
+        } else if (defaultUser != null) {
             defaultUser.rentingMovie(m);
-            movieLibrary.removeMovie(m);
         }
     }
 
@@ -277,7 +298,7 @@ public class VideoClub {
     }
 
 
-    public String[] login(String numCarte){
+    public String[] login(String numCarte) {
 //        User user = loadUser(numCarte);
 //        String[] infosUser = new String[2];
 //
@@ -293,11 +314,16 @@ public class VideoClub {
     }
 
 
-    public boolean exists(String identifiant){
-        return true;
+    public boolean exists(String identifiant) {
+        Movie movie = movieLibrary.getMovie(identifiant);
+        if (movie == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    public String[] getMovieFromTitle(String title){
+    public String[] getMovieFromTitle(String title) {
 //        Movie movie = movieList.get(0); // recherche de la movie
 //        String [] movieData = new String[9];
 //        movieData[0] = movie.affiche;
@@ -311,21 +337,12 @@ public class VideoClub {
 //        movieData[8] = movie.identifiant;
         return new String[1];
     }
-    public void rentMovie(String identifiant){
 
+    public List<String> getCategories() {
+        return movieLibrary.getCategoriesSet();
     }
 
-    public List<String> getCategories(){
-        List<String> categories = new LinkedList<>();
-        categories.add("Horreur");
-        categories.add("Fantastique");
-        categories.add("Comédie");
-        categories.add("Drame");
-        categories.add("Pour Adulte");
-        return categories;
-    }
-
-    public List<String[]> getMoviesOfCategory(String category){
+    public List<String[]> getMoviesOfCategory(String category) {
         List<String[]> movieListData = new LinkedList<>();
 //        for( Movie movie : movieList){
 //            String [] movieData = new String[9];
@@ -345,18 +362,19 @@ public class VideoClub {
 
 
     public void restrictCategory(String chosenCategory) {
-
+        Subscriber sub = currentSubscriber;
+        sub.restrainMovieByCategory(chosenCategory);
     }
 
     public void createNewSubscriber(String[] userData) {
-//        userData[0] = nom
-//        userData[1] = prenom
-//        userData[2] = num CB
+        AdultSubscriberFactory userFactory = new AdultSubscriberFactory();
+        User user = userFactory.makeUser(userData[0], userData[1], userData[2]);
+        save((AdultSubscriber) user);
     }
 
     public void createNewChildSubscriber(String[] userData) {
-//        userData[0] = nom
-//        userData[1] = prenom
+        ChildSubscriberFactory userFactory = new ChildSubscriberFactory();
+        User user = userFactory.makeUser(userData[0], userData[1], (AdultSubscriber) currentSubscriber);
+        save((AdultSubscriber) user);
     }
-
 }
