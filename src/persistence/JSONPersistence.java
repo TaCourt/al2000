@@ -15,7 +15,7 @@ public class JSONPersistence implements Persistence {
     private final String SUBSCRIBER_DB = this.filePath.concat("/db/subscribers.json");
     private final String MOVIE_DB = this.filePath.concat("/db/movies.json");
     private final String AVAILABLE_MOVIE_DB = this.filePath.concat("/db/available_movies.json");
-    private final String RENTAL_DB = this.filePath.concat("/db/rental.json");
+    private final String RENTAL_DB = this.filePath.concat("/db/rentals.json");
 
     private JSONObject SUBSCRIBER_JSON_DB;
     private JSONObject MOVIE_JSON_DB;
@@ -61,7 +61,7 @@ public class JSONPersistence implements Persistence {
 
     @Override
     public void saveRental(HashMap<String, String> rentalDetails) {
-        this.RENTAL_JSON_DB.put(rentalDetails.get("id"), rentalDetails);
+        this.RENTAL_JSON_DB.put(rentalDetails.get("UUID"), rentalDetails);
         this.saveToFile(this.RENTAL_DB, this.RENTAL_JSON_DB);
     }
 

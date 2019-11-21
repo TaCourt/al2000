@@ -198,7 +198,17 @@ public class DAO {
     }
 
     public Rental loadRental(String currentRentalId) {
-        // TODO
-        return null;
+        HashMap<String, String> rentalDetails = this.persistence.loadRental(currentRentalId);
+        if (rentalDetails == null) {
+            return null;
+        }
+        return new Rental(UUID.fromString(rentalDetails.get("UUID")), this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))));
+    }
+
+    public void saveRental(Rental rental) {
+        HashMap<String, String> rentalDetails = new HashMap();
+
+        rentalDetails.put("UUID", rental.getRentalId().toString());
+        rentalDetails.put("movieId", rental.getMovie().getMovieId().toString());
     }
 }
