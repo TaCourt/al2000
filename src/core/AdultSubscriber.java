@@ -27,7 +27,7 @@ public class AdultSubscriber extends Subscriber {
     }
 
     @Override
-    public void restrainChildMovieByCategory(ChildSubscriber c, String category) {
+    public void restrainChildMovieByCategory (ChildSubscriber c,String category) {
         if (children.contains(c)) {
             c.restrainMovieByCategory(category);
         }

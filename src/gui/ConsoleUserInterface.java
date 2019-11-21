@@ -11,7 +11,8 @@ public class ConsoleUserInterface implements UserInterface {
      String nom;
      Boolean isConnected;
 
-
+    //Interface parent --> afficher historique enfant + restreindre cat enfant.
+    // Interface enfant, pas d'option de restriction
     public ConsoleUserInterface(src.core.VideoClub videoClub){
         this.videoClub = videoClub;
         isConnected = false;
@@ -29,14 +30,14 @@ public class ConsoleUserInterface implements UserInterface {
 
     @Override
     public void cyberVideoMovies() {
-        List<String[]> movies = videoClub.getAvailableMovies();
+        List<String[]> movies = videoClub.getCyberVideoMovie();
         printMovieList(movies);
         redirectToMainMenu();
     }
 
     @Override
     public void supposedAvailableMovies() {
-        List<String[]> movies = videoClub.getAvailableMovies();
+        List<String[]> movies = videoClub.getAl2000Movies();
         printMovieList(movies);
         redirectToMainMenu();
     }
@@ -91,6 +92,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     @Override
     public void signIn() {
+        //TODO fixer les appels videoclub
         String numCarte = printSignInPage();
         String[] infosUser = videoClub.login(numCarte);
         redirectFromLoginPage(infosUser); // set isConnected, prenom et nom
@@ -136,7 +138,6 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Veuillez placer le DVD dans la trappe");
 
         redirectToMainMenu();
-
     }
 
     @Override
@@ -147,7 +148,7 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
 
-    public void signOut(){
+    public void signOut(){ // TODO a finir coté videoclub après pull
         this.prenom = "";
         this.nom = "";
         this.isConnected = false;
@@ -159,7 +160,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectFromMainSubscriberMenu(userChoice);
     }
 
-    public void searchACategory(){
+    public void searchACategory(){ //TODO methode getMoviesOfCategory faite dans le prochain pull
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
@@ -172,7 +173,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    public void searchAMovie(){
+    public void searchAMovie(){ //todo same
         String searchedTitle = printSearchFromTitle();
         String[] movie = videoClub.getMovieFromTitle(searchedTitle);
         if (movie == null) {

@@ -1,0 +1,50 @@
+{
+    "5a60add7-eecd-4629-b4eb-98922951dc7b": {
+        "moviesRestrained": "",
+        "parent": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+        "firstName": "",
+        "balanceSubscriberCard": "0.0",
+        "currentRentedMovies": "",
+        "categoryRestrained": "",
+        "name": "",
+        "history": "",
+        "creditCard": "0",
+        "maxMovieRented": "3",
+        "UUID": "5a60add7-eecd-4629-b4eb-98922951dc7b",
+        "account": "childSubscriber"
+    },
+    "db1b5f61-4444-4c1d-8862-9476212a9718": {
+        "currentRental": "",
+        "creditCard": "0",
+        "UUID": "db1b5f61-4444-4c1d-8862-9476212a9718",
+        "account": "lambdaUser"
+    },
+    "a6c21b11-a26f-4529-895d-8ff84f1398a7": {
+        "moviesRestrained": "",
+        "firstName": "",
+        "balanceSubscriberCard": "0.0",
+        "currentRentedMovies": "",
+        "categoryRestrained": "",
+        "children": "97083b2d-3b6c-4cd1-abaf-d777b27e70c2,5a60add7-eecd-4629-b4eb-98922951dc7b",
+        "name": "",
+        "history": "",
+        "creditCard": "0",
+        "maxMovieRented": "3",
+        "UUID": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+        "account": "adultSubscriber"
+    },
+    "97083b2d-3b6c-4cd1-abaf-d777b27e70c2": {
+        "moviesRestrained": "",
+        "parent": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+        "firstName": "",
+        "balanceSubscriberCard": "0.0",
+        "currentRentedMovies": "",
+        "categoryRestrained": "",
+        "name": "",
+        "history": "",
+        "creditCard": "0",
+        "maxMovieRented": "3",
+        "UUID": "97083b2d-3b6c-4cd1-abaf-d777b27e70c2",
+        "account": "childSubscriber"
+    }
+}

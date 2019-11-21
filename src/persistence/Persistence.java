@@ -5,9 +5,12 @@ import src.core.ChildSubscriber;
 import src.core.LambdaUser;
 
 import java.util.HashMap;
+import java.util.function.BiConsumer;
 
 public interface Persistence {
-    void saveUser (HashMap<String, String> userDetails);
+    void saveSubscriber(HashMap<String, String> userDetails);
 
-    HashMap<String, String> loadUser (String id);
+    HashMap<String, String> loadSubscriber(String id);
+
+    void forEachSubscriber(BiConsumer<String, HashMap<String, String>> callback);
 }
