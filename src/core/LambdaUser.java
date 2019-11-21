@@ -1,12 +1,10 @@
 package src.core;
 
-import java.util.UUID;
-
 public class LambdaUser extends User {
     private Rental currentRental;
 
-    public LambdaUser(UUID userId, long card) {
-        super(userId, card);
+    public LambdaUser(long card) {
+        super(card);
     }
 
     @Override

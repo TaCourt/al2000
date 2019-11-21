@@ -19,22 +19,24 @@ public class AdultSubscriber extends Subscriber {
         return children.remove(child);
     }
 
-    public void restrainChildMovie(ChildSubscriber c, Movie m) {
+    @Override
+    public void restrainChildMovieByTitle(ChildSubscriber c, String title) {
         if (children.contains(c)) {
-            c.restrainMovie(m);
+            c.restrainMovieByTitle(title);
         }
     }
 
-    public void restrainChildMovie(ChildSubscriber c, String category) {
+    @Override
+    public void restrainChildMovieByCategory(ChildSubscriber c, String category) {
         if (children.contains(c)) {
-            c.restrainMovie(category);
+            c.restrainMovieByCategory(category);
         }
     }
 
+    @Override
     public void showChildHistory() {
 
     }
-
 
     public List<ChildSubscriber> getChildren() {
         return new ArrayList<ChildSubscriber>(this.children);

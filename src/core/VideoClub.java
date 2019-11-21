@@ -94,10 +94,7 @@ public class VideoClub {
 
         User user = null;
         String account = userDetails.get("account");
-        if (this.LAMBDA_USER_ACCOUNT.equals(account)) {
-            user = new LambdaUser(UUID.fromString(userDetails.get("UUID")), Long.parseLong(userDetails.get("creditCard")));
-        }
-        else if (this.ADULT_SUBSCRIBER_ACCOUNT.equals(account)) {
+        if (this.ADULT_SUBSCRIBER_ACCOUNT.equals(account)) {
             user = new AdultSubscriber(UUID.fromString(userDetails.get("UUID")),
                                         Long.parseLong(userDetails.get("creditCard")),
                                         userDetails.get("name"),

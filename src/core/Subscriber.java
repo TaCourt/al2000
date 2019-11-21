@@ -104,4 +104,16 @@ public abstract class Subscriber extends User {
     public UUID getSubscriberId() {
         return subscriberId;
     }
+
+    public void restrainChildMovieByTitle(ChildSubscriber c, String title) {
+        System.out.println("Il faut avoir des enfants pour restreindre les films d'un enfant");
+    }
+
+    public void restrainChildMovieByCategory(ChildSubscriber c, String category) {
+        System.out.println("Il faut avoir des enfants pour restreindre les films d'un enfant");
+    }
+
+    public void showChildHistory() {
+        System.out.println("Il faut avoir des enfants pour afficher l'historique d'un enfant");
+    }
 }
