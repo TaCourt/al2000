@@ -91,7 +91,7 @@ public class VideoClub {
         return convertList(movieLibrary.getAl2000Movies());
     }
 
-    public List<String[]> getMovie(String title) {
+    public List<String[]> getMovieByTitle(String title) {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getMovieFromTitle(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), title));
         }
@@ -174,47 +174,9 @@ public class VideoClub {
         }
     }
 
-    public List<String[]> getMovieFromTitle(String title) {
-        Map<Long, Movie> list = movieLibrary.getMovieFromTitle(title);
-        List<String[]> results = new LinkedList<>();
-        for (Long key : list.keySet()) {
-            Movie currentMovie = list.get(key);
-            String[] movieData= convertMovieToStringTab(currentMovie);
-            results.add(movieData);
-        }
-
-        return results;
-    }
-
     public List<String> getCategories() {
         return movieLibrary.getCategoriesSet();
     }
-
-    public List<String[]> getMoviesOfCategory(String category) {
-        Map<Long, Movie> list = movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(),currentSubscriber.getMoviesRestrained(),category);
-        List<String[]> results = new LinkedList<>();
-        for (Long key : list.keySet()) {
-            Movie currentMovie = list.get(key);
-            String[] movieData= convertMovieToStringTab(currentMovie);
-            results.add(movieData);
-        }
-        return results;
-    }
-
-    private String[] convertMovieToStringTab(Movie movie){
-        String [] movieData = new String[9];
-        movieData[0] = movie.getAffiche();
-        movieData[1] = movie.getTitle();
-        movieData[2] = movie.getCategory();
-        movieData[3] = movie.getSynopsis();
-        movieData[4] = movie.getDuration().toString();
-        movieData[5] = movie.getLanguage();
-        movieData[6] = movie.getActor();
-        movieData[7] = movie.getDirector();
-        movieData[8] = movie.getMovieId().toString();
-        return movieData;
-    }
-
 
     public void restrictCategory(String chosenCategory) {
         currentSubscriber.restrainMovieByCategory(chosenCategory);
