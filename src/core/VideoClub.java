@@ -50,8 +50,8 @@ public class VideoClub {
 
     public void logOut (){
         this.currentSubscriber = null;
-        LambdaUserFactory lUserFac = new LambdaUserFactory();
-        this.defaultUser = (LambdaUser) lUserFac.makeUser();
+//        LambdaUserFactory lUserFac = new LambdaUserFactory();
+//        this.defaultUser = (LambdaUser) lUserFac.makeUser();
     }
 
     public void addTechnicians(Technician technician) {

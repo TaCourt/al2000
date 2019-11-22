@@ -2,7 +2,6 @@ package src.persistence;
 
 import src.core.AdultSubscriber;
 import src.core.ChildSubscriber;
-import src.core.LambdaUser;
 
 import java.util.HashMap;
 import java.util.function.BiConsumer;
