@@ -61,8 +61,11 @@ public class JSONPersistence implements Persistence {
 
     @Override
     public void saveAvailableMovie (String id, boolean isAvailable) {
+        System.out.println(id + "-" + isAvailable);
         // not XOR
         if (!(isAvailable ^ this.AVAILABLE_MOVIE_JSON_DB.get(id) != null)) return;
+        System.out.println(1);
+        System.out.println();
 
         if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, "");
         else if (this.AVAILABLE_MOVIE_JSON_DB.get("id") != null) this.AVAILABLE_MOVIE_JSON_DB.remove(id);
@@ -71,16 +74,16 @@ public class JSONPersistence implements Persistence {
     };
 
     public String[] getAvailableMovies () {
-        /*String[] availableMovies = new String[this.AVAILABLE_MOVIE_JSON_DB.keySet().size()];
+        String[] availableMovies = new String[this.AVAILABLE_MOVIE_JSON_DB.keySet().size()];
 
         for (int i = 0; i < this.AVAILABLE_MOVIE_JSON_DB.keySet().size(); i++) {
-            availableMovies[i] = (String) this.AVAILABLE_MOVIE_JSON_DB.get(Integer.toString(i));
+            int finalI = i;
+            this.AVAILABLE_MOVIE_JSON_DB.forEach((key, value) -> {
+                availableMovies[finalI] = String.valueOf(key);
+            });
         }
 
-        return availableMovies;*/
-
-        // TODO
-        return null;
+        return availableMovies;
     }
 
     @Override

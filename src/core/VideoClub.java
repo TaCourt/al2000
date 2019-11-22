@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class VideoClub {
-    private DAO dao;
+    private VideoClubDAO dao;
     private UserInterface gui;
 
     private List<Technician> technicians;
@@ -30,6 +30,10 @@ public class VideoClub {
 
     public void launch() {
 
+    }
+
+    public VideoClubDAO getDao () {
+        return this.dao;
     }
 
     public void logIn (String subscriberId) {

@@ -13,6 +13,8 @@ class Main {
 
         try {
             videoClub.setPersistence(new JSONPersistence());
+            saveMovie(videoClub);
+            System.out.println(videoClub.getDao().loadAvailableMovies());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -34,16 +36,16 @@ class Main {
     }
 
     public static void saveMovie (VideoClub v) throws IOException, ParseException {
-        /*DAO dao = v.getDao();
+        VideoClubDAO dao = v.getDao();
 
         dao.saveMovie(new Movie((long) 0, "jsp ckec", "Le Projet", "COO", "ça change souvent",
-                190, "Français", "MG, FC, TC, LB", "Les mêmes", true));
+                190, "Français", "MG, FC, TC, LB", "Les mêmes", false));
 
         dao.saveMovie(new Movie((long) 1, "un autre", "Le Projet - La suite", "COO", "ça change souvent",
-                160, "Français", "MG, FC, TC, LB", "Les mêmes", false));
+                160, "Français", "MG, FC, TC, LB", "Les mêmes", true));
 
 
         dao.saveMovie(new Movie((long) 2, "jsp ckec", "Le Projet - La suite 2", "COO", "ça change souvent",
-                120, "Anglais", "MG, FC, TC, LB", "Les mêmes", false));*/
+                120, "Anglais", "MG, FC, TC, LB", "Les mêmes", false));
     }
 }
