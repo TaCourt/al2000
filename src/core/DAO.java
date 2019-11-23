@@ -140,7 +140,7 @@ public class DAO {
         String[] splitString;
         splitString = subscriberDetails.get("categoryRestrained").split(",");
         for (String category : splitString) {
-            subscriber.restrainMovieByTitle(category);
+            subscriber.restrictMovieByTitle(category);
         }
 
         splitString = subscriberDetails.get("currentRentedMovies").split(",");
@@ -155,7 +155,7 @@ public class DAO {
 
         splitString = subscriberDetails.get("moviesRestrained").split(",");
         for (String movieRestrainedTitle : splitString) {
-            subscriber.restrainMovieByTitle(movieRestrainedTitle);
+            subscriber.restrictMovieByTitle(movieRestrainedTitle);
         }
     }
 
@@ -213,7 +213,7 @@ public class DAO {
         if (rentalDetails == null) {
             return null;
         }
-        return new Rental(UUID.fromString(rentalDetails.get("UUID")), this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))));
+        return new Rental(UUID.fromString(rentalDetails.get("UUID")), this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))), Double.parseDouble(rentalDetails.get("price")));
     }
 
     public void saveRental(Rental rental) {
@@ -221,5 +221,6 @@ public class DAO {
 
         rentalDetails.put("UUID", rental.getRentalId().toString());
         rentalDetails.put("movieId", rental.getMovie().getMovieId().toString());
+        rentalDetails.put("price", rental.getPricePerDay().toString());
     }
 }

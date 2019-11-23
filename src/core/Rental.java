@@ -5,18 +5,21 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Rental {
+    public static final double NB_MS_IN_A_DAY = 8640000;
+    private Double pricePerDay;
     private UUID rentalId;
     private Movie movie;
     private Date returnDate;
     private Date rentingDate;
 
-    public Rental (UUID rentalId, Movie movie) {
+    public Rental (UUID rentalId, Movie movie, Double pricePerDay) {
         this.rentingDate = Date.from(Instant.now());
         this.movie = movie;
         this.rentalId = rentalId;
+        this.pricePerDay = pricePerDay;
     }
     public Rental ( Movie movie) {
-        this(UUID.randomUUID(), movie);
+        this(UUID.randomUUID(), movie, 5.0);
     }
     public UUID getRentalId () {
         return this.rentalId;
@@ -28,6 +31,18 @@ public class Rental {
 
     public void setReturnDate() {
         this.rentingDate = Date.from(Instant.now());
+    }
+
+    public Double getPrice() {
+        long time = 0;
+        if(returnDate.after(rentingDate)) {
+            time = returnDate.getTime() - rentingDate.getTime();
+        }
+        return (time/ NB_MS_IN_A_DAY) * pricePerDay;
+    }
+
+    public Double getPricePerDay() {
+        return pricePerDay;
     }
 
 }

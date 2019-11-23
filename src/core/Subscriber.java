@@ -11,6 +11,7 @@ public abstract class Subscriber {
     private double balanceSubscriberCard;
     private List<Rental> currentRentedMovies;
     private int maxMovieRented;
+    private Double pricePerDay = 4.0;
 
     private List<Rental> history;
 
@@ -30,7 +31,7 @@ public abstract class Subscriber {
         this.history = new ArrayList<>();
     }
 
-    public void rentingMovie(Movie m) {
+    public void rentMovie(Movie m) {
         if (currentRentedMovies.size() != maxMovieRented) {
             addRental(m);
         } else {
@@ -38,34 +39,39 @@ public abstract class Subscriber {
         }
     }
 
-    public void returnMovie(Movie m) {
+    public double returnMovie(Movie m) {
         for (Rental r : currentRentedMovies) {
-            if (r.getMovie().getMovieId() == m.getMovieId()) {
+            if (r.getMovie().getMovieId().equals(m.getMovieId())) {
+                if (balanceSubscriberCard < r.getPrice()) {
+                    System.out.println("Vous n'avez pas assès de credit sur votre carte, veuillez la recharger");
+                }
                 r.setReturnDate();
                 history.add(r);
+                return r.getPricePerDay();
             }
         }
+        return 0.0;
     }
 
 
     public void addRental(Movie m) {
-        currentRentedMovies.add(new Rental(UUID.randomUUID(), m));
+        currentRentedMovies.add(new Rental(UUID.randomUUID(), m, this.pricePerDay));
     }
     public void addRental(Rental r) { currentRentedMovies.add(r); }
 
-    public void restrainMovieByTitle(String title) {
+    public void restrictMovieByTitle(String title) {
         moviesRestrained.add(title);
     }
 
-    public void restrainMovieByCategory(String category) {
+    public void restrictMovieByCategory(String category) {
         categoryRestrained.add(category);
     }
 
-    public boolean removeRestrainedMovie(String title) {
+    public boolean removeRestrictedMovie(String title) {
         return moviesRestrained.remove(title);
     }
 
-    public boolean removeRestrainedCategory(String category) {
+    public boolean removeRestrictedCategory(String category) {
         return moviesRestrained.remove(category);
     }
 

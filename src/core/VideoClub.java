@@ -127,7 +127,7 @@ public class VideoClub {
     public void rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null) {
-            currentSubscriber.rentingMovie(m);
+            currentSubscriber.rentMovie(m);
         }
     }
 
@@ -145,21 +145,23 @@ public class VideoClub {
         }
     }
 
-    public void returnMovie(String idMovieReturned, long creditCard) {
+    public Double returnMovie(String idMovieReturned, long creditCard) {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         Rental oldRental = currentNonSubRentals.get(creditCard);
         currentNonSubRentals.remove(creditCard);
         historyNonSubRentals.put(creditCard, oldRental);
         movieLibrary.addMovie(m);
+        return oldRental.getPrice();
 
     }
 
-    public void returnMovie(String idMovieReturned) {
+    public Double returnMovie(String idMovieReturned) {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         if (currentSubscriber != null) {
-            currentSubscriber.returnMovie(m);
             movieLibrary.addMovie(m);
+            return currentSubscriber.returnMovie(m);
         }
+        return null;
     }
 
 
@@ -179,7 +181,7 @@ public class VideoClub {
     }
 
     public void restrictCategory(String chosenCategory) {
-        currentSubscriber.restrainMovieByCategory(chosenCategory);
+        currentSubscriber.restrictMovieByCategory(chosenCategory);
     }
 
     public void createNewSubscriber(String[] userData) {
