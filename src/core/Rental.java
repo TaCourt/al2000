@@ -33,12 +33,16 @@ public class Rental {
         this.rentingDate = Date.from(Instant.now());
     }
 
+    /**
+     * Calcule le prix correspondant à la location
+     * @return ce prix
+     */
     public Double getPrice() {
         long time = 0;
         if(returnDate.after(rentingDate)) {
             time = returnDate.getTime() - rentingDate.getTime();
         }
-        return (time/ NB_MS_IN_A_DAY) * pricePerDay;
+        return ((time / NB_MS_IN_A_DAY)+1) * pricePerDay;
     }
 
     public Double getPricePerDay() {

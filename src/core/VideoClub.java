@@ -70,6 +70,29 @@ public class VideoClub {
         this.fineCost = fineCost;
     }
 
+    /**
+     * Convertis une map de film en liste de tableau de String
+     * @param map la map de film à convertire
+     * @return la liste de tableau de String
+     */
+    public List<String[]> convertList(Map<Long, Movie> map) {
+        List<String[]> toReturn = new LinkedList();
+        for (Long key : movieLibrary.getCyberVideoMovies().keySet()) {
+            String[] movie = new String[9];
+            movie[0] = map.get(key).getAffiche();
+            movie[1] = map.get(key).getTitle();
+            movie[2] = map.get(key).getCategory();
+            movie[3] = map.get(key).getSynopsis();
+            movie[4] = map.get(key).getDuration().toString();
+            movie[5] = map.get(key).getLanguage();
+            movie[6] = map.get(key).getActor();
+            movie[7] = map.get(key).getDirector();
+            movie[8] = map.get(key).getMovieId().toString();
+            toReturn.add(movie);
+        }
+        return toReturn;
+    }
+
     public List<String[]> getCyberVideoMovie() {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getCyberVideoMovies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
@@ -105,25 +128,11 @@ public class VideoClub {
         return convertList(movieLibrary.getMovieFromTitle(category));
     }
 
-    public List<String[]> convertList(Map<Long, Movie> map) {
-        List<String[]> toReturn = new LinkedList();
-        for (Long key : movieLibrary.getCyberVideoMovies().keySet()) {
-            String[] movie = new String[9];
-            movie[0] = map.get(key).getAffiche();
-            movie[1] = map.get(key).getTitle();
-            movie[2] = map.get(key).getCategory();
-            movie[3] = map.get(key).getSynopsis();
-            movie[4] = map.get(key).getDuration().toString();
-            movie[5] = map.get(key).getLanguage();
-            movie[6] = map.get(key).getActor();
-            movie[7] = map.get(key).getDirector();
-            movie[8] = map.get(key).getMovieId().toString();
-            toReturn.add(movie);
-        }
-        return toReturn;
-    }
-
-
+    /**
+     * Location d'un film pour les abonnées : Verifie que l'utilisateur soit bien connecté et que le film existe bien
+     * puis effectue la location.
+     * @param idMovie : l'identifiant du film que l'utilisateur veut louer
+     */
     public void rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null) {
@@ -131,6 +140,12 @@ public class VideoClub {
         }
     }
 
+    /**
+     * Location d'un film pour les non abonnées : Verifie que l'utilisateur n'a pas deja une location en cour
+     * puis creer la location et l'ajoute à la liste des locations des utilisateurs non abonées.
+     * @param idMovie : l'identifiant du film que l'utilisateur veut louer
+     * @param creditCard : la carte de crédit de l'utilisateur
+     */
     public void rentMovie(String idMovie, long creditCard) {
         if (currentNonSubRentals.get(creditCard) != null) {
             System.out.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau svp");
@@ -145,16 +160,11 @@ public class VideoClub {
         }
     }
 
-    public Double returnMovie(String idMovieReturned, long creditCard) {
-        Movie m = movieLibrary.getMovie(idMovieReturned);
-        Rental oldRental = currentNonSubRentals.get(creditCard);
-        currentNonSubRentals.remove(creditCard);
-        historyNonSubRentals.put(creditCard, oldRental);
-        movieLibrary.addMovie(m);
-        return oldRental.getPrice();
-
-    }
-
+    /**
+     * Retour d'un film pour des abonées. Vérifie que l'utilisateur est bien connecté puis effectue le retour.
+     * @param idMovieReturned
+     * @return le prix de la location
+     */
     public Double returnMovie(String idMovieReturned) {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         if (currentSubscriber != null) {
@@ -164,8 +174,22 @@ public class VideoClub {
         return null;
     }
 
+    /**
+     * Retour d'un film pour des non abonées. Supprime la location correspondante de la liste des locations des utilisateurs non abonées.
+     * Ajoute la location à l'historique des locations des utilisateurs non abonées.
+     * @param idMovieReturned : l'identifiant du film que l'utilisateurs rend
+     * @param creditCard : la carte de crédit de l'utilisaetur
+     * @return le prix de la location
+     */
+    public Double returnMovie(String idMovieReturned, long creditCard) {
+        Movie m = movieLibrary.getMovie(idMovieReturned);
+        Rental oldRental = currentNonSubRentals.get(creditCard);
+        currentNonSubRentals.remove(creditCard);
+        historyNonSubRentals.put(creditCard, oldRental);
+        movieLibrary.addMovie(m);
+        return oldRental.getPrice();
 
-
+    }
 
     public boolean exists(String identifiant) {
         Movie movie = movieLibrary.getMovie(identifiant);
