@@ -32,10 +32,6 @@ public class VideoClub {
 
     }
 
-    public VideoClubDAO getDao () {
-        return this.dao;
-    }
-
     public void logIn (String subscriberId) {
         this.currentSubscriber = this.dao.loadSubscriber(subscriberId);
     }
