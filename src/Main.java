@@ -9,10 +9,10 @@ import java.io.IOException;
 class Main {
     public static void main (String[] args){
         VideoClub videoClub = new VideoClub();
-        videoClub.launch();
 
         try {
             videoClub.setPersistence(new JSONPersistence());
+            videoClub.launch();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -34,7 +34,7 @@ class Main {
     }
 
     public static void saveMovie (VideoClub v) throws IOException, ParseException {
-        /*DAO dao = v.getDao();
+        /*VideoClubDAO dao = v.getDao();
 
         dao.saveMovie(new Movie((long) 0, "jsp ckec", "Le Projet", "COO", "ça change souvent",
                 190, "Français", "MG, FC, TC, LB", "Les mêmes", true));
@@ -44,6 +44,8 @@ class Main {
 
 
         dao.saveMovie(new Movie((long) 2, "jsp ckec", "Le Projet - La suite 2", "COO", "ça change souvent",
-                120, "Anglais", "MG, FC, TC, LB", "Les mêmes", false));*/
+                120, "Anglais", "MG, FC, TC, LB", "Les mêmes", false));
+    */
     }
+
 }

@@ -69,7 +69,7 @@ public abstract class Subscriber {
     private void addRental(Movie m) {
         currentRentedMovies.add(new Rental(UUID.randomUUID(), m, this.pricePerDay));
     }
-    private void addRental(Rental r) { currentRentedMovies.add(r); }
+    public void addRental(Rental r) { currentRentedMovies.add(r); }
 
     public void restrictMovieByTitle(String title) {
         moviesRestrained.add(title);

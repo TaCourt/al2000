@@ -7,7 +7,7 @@ import src.persistence.Persistence;
 import src.gui.UserInterface;
 
 public class VideoClub {
-    private DAO dao;
+    private VideoClubDAO dao;
     private UserInterface gui;
 
     private List<Technician> technicians;

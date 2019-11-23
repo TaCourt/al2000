@@ -18,6 +18,12 @@ public class Rental {
         this.rentalId = rentalId;
         this.pricePerDay = pricePerDay;
     }
+    public Rental (UUID rentalId, Movie movie, Date returnDate, Date rentingDate) {
+        this.rentingDate = rentingDate;
+        this.returnDate = returnDate;
+        this.movie = movie;
+        this.rentalId = rentalId;
+    }
     public Rental ( Movie movie) {
         this(UUID.randomUUID(), movie, 5.0);
     }
@@ -29,8 +35,16 @@ public class Rental {
         return this.movie;
     }
 
-    public void setReturnDate() {
-        this.rentingDate = Date.from(Instant.now());
+    public void setReturnDate () {
+        this.returnDate = Date.from(Instant.now());
+    }
+
+    public Date getReturnDate() {
+        return returnDate;
+    }
+
+    public Date getRentingDate() {
+        return rentingDate;
     }
 
     /**
