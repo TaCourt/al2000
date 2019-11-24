@@ -232,6 +232,7 @@ public class VideoClub {
         for (ChildSubscriber child : children){
             if(child.getSubscriberId() == UUID.fromString(childId)){
                 child.restrictMovieByCategory(chosenCategory);
+                this.dao.save(child);
             }
         }
     }
@@ -251,6 +252,7 @@ public class VideoClub {
 
     public void restrictCategory(String chosenCategory) {
         currentSubscriber.restrictMovieByCategory(chosenCategory);
+        this.dao.save(currentSubscriber);
     }
 
     public String createNewSubscriber(String[] userData) {
