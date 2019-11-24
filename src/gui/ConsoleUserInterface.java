@@ -109,7 +109,8 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un lastName de catégorie valide");
+            System.err.println("Erreur : entrez un nom de catégorie valide");
+            waitAnEntry();
         }else{
             videoClub.restrictCategory(chosenCategory);
             System.out.println("Opération enregistré");
@@ -122,14 +123,28 @@ public class ConsoleUserInterface implements UserInterface {
     @Override
     public void rentMovie() {
         String id = printRentMovie();
-        if( videoClub.exists(id)){
-            videoClub.rentMovie(id);
-            printRentMovieSuccess();
-        }else{
-            System.err.println("Erreur : Identifiant de film introuuvable.");
+        if( !videoClub.exists(id)){
+            System.err.println("Erreur : Identifiant de film introuvable.");
             System.err.println("Utilisez les fonctions de recherche pour le trouver.");
+            waitAnEntry();
+            redirectToMainMenu();
         }
 
+        String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
+        String validationWord = printUserRentFinalValidation();
+
+        if(validationWord.equals("valider")){
+            if (videoClub.rentMovie(id,Long.parseLong(creditCardNumber)) ){
+                printRentMovieSuccess();
+            }else{
+                System.err.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau");
+                waitAnEntry();
+            }
+            redirectToMainMenu();
+        }else if( validationWord.equals("annuler")){
+            System.out.println("Opération annulée.");
+            waitAnEntry();
+        }
         redirectToMainMenu();
 
     }
@@ -165,6 +180,7 @@ public class ConsoleUserInterface implements UserInterface {
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un lastName de catégorie valide");
+            waitAnEntry();
         }else{
             List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
             printMovieList(moviesOfCategory);
@@ -178,6 +194,7 @@ public class ConsoleUserInterface implements UserInterface {
         List<String[]> movies = videoClub.getMovieByTitle(searchedTitle);
         if (movies.isEmpty()) {
             System.err.println("Aucun film n'a été trouvé ayant ce titre, vérifiez l'orthograpge.");
+            waitAnEntry();
         }else{
             printMovieList(movies);
         }
@@ -195,6 +212,7 @@ public class ConsoleUserInterface implements UserInterface {
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un lastName de catégorie valide");
+            waitAnEntry();
         }else{
             videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
             System.out.println("Opération enregistré");
@@ -259,6 +277,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     private void printLoginFailedMessage() {
         System.err.println("Erreur : Numéro de carte inconnu !");
+        waitAnEntry();
     }
 
 
@@ -369,7 +388,7 @@ public class ConsoleUserInterface implements UserInterface {
             userEntry = "";
         }
         while( userEntry == null || userEntry.isEmpty() ){
-            System.err.println("Format invalide, entrez");
+            System.err.println("Format invalide !");
             System.out.println(text);
             userEntry = scanner.nextLine();
         }
@@ -377,6 +396,18 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     private String printUserFormFinalValidation(){
+        System.out.println("Confirmer la création de compte ?");
+        String validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        while( !validationWord.equals("valider") && !validationWord.equals("annuler")){
+            System.err.println("Réponse non reconnue");
+            System.out.println("Confirmer la création de compte ?");
+            validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        }
+
+        return validationWord;
+    }
+
+    private String printUserRentFinalValidation(){
         System.out.println("Confirmer la création de compte ?");
         String validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
         while( !validationWord.equals("valider") && !validationWord.equals("annuler")){
@@ -492,6 +523,10 @@ public class ConsoleUserInterface implements UserInterface {
     private void redirectToMainMenu(){
         System.out.println("------------------------------------------");
         welcomePage();
+    }
+
+    private void waitAnEntry(){
+        new Scanner(System.in).next();
     }
 
 }

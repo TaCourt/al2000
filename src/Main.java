@@ -12,7 +12,6 @@ class Main {
 
         try {
             videoClub.setPersistence(new JSONPersistence());
-            videoClub.init();
             videoClub.launch();
         } catch (IOException e) {
             e.printStackTrace();

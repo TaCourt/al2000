@@ -57,7 +57,7 @@ public abstract class Subscriber {
                 if (balanceSubscriberCard < r.getPrice()) {
                     System.out.println("Vous n'avez pas assès de credit sur votre carte, veuillez la recharger");
                 }
-                r.setReturnDate();
+                r.setReturnDateToNow();
                 history.add(r);
                 return r.getPricePerDay();
             }

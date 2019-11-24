@@ -24,8 +24,9 @@ public class VideoClub {
 
     public void init () {
         this.initFilmLibrary();
-
         this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
+        this.currentNonSubRentals = new HashMap<>();
+        this.historyNonSubRentals = new HashMap<>();
     }
 
     private void initFilmLibrary () {
@@ -51,6 +52,7 @@ public class VideoClub {
     }
 
     public void launch() {
+        this.init();
         setGui(new ConsoleUserInterface(this));
         gui.welcomePage();
         this.currentSubscriber = null;
@@ -173,18 +175,20 @@ public class VideoClub {
      * @param idMovie    : l'identifiant du film que l'utilisateur veut louer
      * @param creditCard : la carte de crédit de l'utilisateur
      */
-    public void rentMovie(String idMovie, long creditCard) {
+    public boolean rentMovie(String idMovie, long creditCard) {
         if (currentNonSubRentals.get(creditCard) != null) {
-            System.out.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau svp");
+            return false;
         }
 
         Movie m = movieLibrary.getMovie(idMovie);
         if (m != null) {
             Rental rental = new Rental(m);
             currentNonSubRentals.put(creditCard, rental);
+            rental.setRentingDateToNow();
             this.dao.saveRental(rental);
             movieLibrary.removeMovie(m);
         }
+        return true;
     }
 
     /**

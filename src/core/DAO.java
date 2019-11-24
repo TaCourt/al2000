@@ -255,8 +255,13 @@ public class DAO implements VideoClubDAO {
         rentalDetails.put("UUID", rental.getRentalId().toString());
         rentalDetails.put("movieId", rental.getMovie().getMovieId().toString());
         rentalDetails.put("price", rental.getPricePerDay().toString());
-        rentalDetails.put("returnDate", rental.getReturnDate().toString());
         rentalDetails.put("rentingDate", rental.getRentingDate().toString());
+        if(rental.getReturnDate() == null){
+            rentalDetails.put("returnDate", "");
+        }else{
+            rentalDetails.put("returnDate", rental.getReturnDate().toString());
+        }
+
 
         this.persistence.saveRental(rentalDetails);
     }
