@@ -118,7 +118,15 @@ public class FilmLibrary{
         return search("categorie", category);
     }
 
+    public List<String> getCategoriesSet() {
+        return this.categoriesSet;
+    }
 
+    /**
+     * Ajoute un exemplaire de film à la filmothèque.
+     * Si le nombre d'exemplaire de ce film était à 0 alors on l'incrémente et on l'ajoute dans la liste des films disponible
+     * @param m est le film dont l'exemplaire est à ajouter
+     */
     public void addMovie(Movie m) {
         Integer nbCopies = nbMovieCopies.get(m.getMovieId());
         if (nbCopies == 0) {
@@ -129,6 +137,12 @@ public class FilmLibrary{
 
     }
 
+    /**
+     * Retire un exemplaire de film à la filmothèque.
+     * Si le nombre d'exemplaire passe à 0, on retire le film des films disponible
+     * @param m est le film dont l'exemplaire est à retirer.
+     * @return un booleen correspondant à la validation de la méthode : false il y a eu un problème, true tout s'est bien passé
+     */
     public boolean removeMovie(Movie m) {
         Integer nbCopies = nbMovieCopies.get(m.getMovieId());
         if (nbCopies < 1) {
@@ -141,10 +155,6 @@ public class FilmLibrary{
             al2000Movies.get(m.getMovieId()).setAvailability(false);
         }
         return true;
-    }
-
-    public List<String> getCategoriesSet() {
-        return this.categoriesSet;
     }
 
 }

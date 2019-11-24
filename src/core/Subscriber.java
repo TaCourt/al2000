@@ -11,11 +11,12 @@ public abstract class Subscriber {
     private double balanceSubscriberCard;
     private List<Rental> currentRentedMovies;
     private int maxMovieRented;
+    private Double pricePerDay = 4.0;
 
     private List<Rental> history;
 
-    private List<String> categoryRestrained;
-    private List<String> moviesRestrained;
+    private List<String> categoryRestrained; //Liste des catégories restreintes à l'utilisateur
+    private List<String> moviesRestrained; //Liste des titres de films restreints à l'utilisateur
 
     public Subscriber(UUID subscriberId, long creditCard, String name, String firstName, double balance) {
         this.creditCard = creditCard;
@@ -30,7 +31,13 @@ public abstract class Subscriber {
         this.history = new ArrayList<>();
     }
 
-    public void rentingMovie(Movie m) {
+    /**
+     * Ajoute une location à la liste des locations courantes de l'utilisateur.
+     * Si l'utilisateur a atteint la limite du nombre de film à louer simultanement
+     * on l'informe.
+     * @param m est le film que l'utilisateur veut louer
+     */
+    public void rentMovie(Movie m) {
         if (currentRentedMovies.size() != maxMovieRented) {
             addRental(m);
         } else {
@@ -38,34 +45,45 @@ public abstract class Subscriber {
         }
     }
 
-    public void returnMovie(Movie m) {
+    /**
+     * Met à jour la location en fixant sa date de retour. Retire cette location de la liste des locations courantes
+     * Ajoute la location à l'historique des locations. Calcul du cout final de la location en testant si l'abonné a assez de credit sur sa carte
+     * @param m est le film à retourner.
+     * @return le cout de la location
+     */
+    public double returnMovie(Movie m) {
         for (Rental r : currentRentedMovies) {
-            if (r.getMovie().getMovieId() == m.getMovieId()) {
+            if (r.getMovie().getMovieId().equals(m.getMovieId())) {
+                if (balanceSubscriberCard < r.getPrice()) {
+                    System.out.println("Vous n'avez pas assès de credit sur votre carte, veuillez la recharger");
+                }
                 r.setReturnDate();
                 history.add(r);
+                return r.getPricePerDay();
             }
         }
+        return 0.0;
     }
 
 
-    public void addRental(Movie m) {
-        currentRentedMovies.add(new Rental(UUID.randomUUID(), m));
+    private void addRental(Movie m) {
+        currentRentedMovies.add(new Rental(UUID.randomUUID(), m, this.pricePerDay));
     }
     public void addRental(Rental r) { currentRentedMovies.add(r); }
 
-    public void restrainMovieByTitle(String title) {
+    public void restrictMovieByTitle(String title) {
         moviesRestrained.add(title);
     }
 
-    public void restrainMovieByCategory(String category) {
+    public void restrictMovieByCategory(String category) {
         categoryRestrained.add(category);
     }
 
-    public boolean removeRestrainedMovie(String title) {
+    public boolean removeRestrictedMovie(String title) {
         return moviesRestrained.remove(title);
     }
 
-    public boolean removeRestrainedCategory(String category) {
+    public boolean removeRestrictedCategory(String category) {
         return moviesRestrained.remove(category);
     }
 
@@ -107,11 +125,11 @@ public abstract class Subscriber {
 
     public long getCreditCard () { return this.creditCard; }
 
-    public void restrainChildMovieByTitle(ChildSubscriber c, String title) {
+    public void restrictChildMovieByTitle(ChildSubscriber c, String title) {
         System.out.println("Il faut avoir des enfants pour restreindre les films d'un enfant");
     }
 
-    public void restrainChildMovieByCategory(ChildSubscriber c, String category) {
+    public void restrictChildMovieByCategory(ChildSubscriber c, String category) {
         System.out.println("Il faut avoir des enfants pour restreindre les films d'un enfant");
     }
 

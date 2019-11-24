@@ -2,9 +2,11 @@ package src.core;
 
 import src.persistence.Persistence;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.*;
 
-public class DAO {
+public class DAO implements VideoClubDAO {
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
     private final String CHILD_SUBSCRIBER_ACCOUNT = "childSubscriber";
 
@@ -140,7 +142,7 @@ public class DAO {
         String[] splitString;
         splitString = subscriberDetails.get("categoryRestrained").split(",");
         for (String category : splitString) {
-            subscriber.restrainMovieByTitle(category);
+            subscriber.restrictMovieByTitle(category);
         }
 
         splitString = subscriberDetails.get("currentRentedMovies").split(",");
@@ -155,7 +157,7 @@ public class DAO {
 
         splitString = subscriberDetails.get("moviesRestrained").split(",");
         for (String movieRestrainedTitle : splitString) {
-            subscriber.restrainMovieByTitle(movieRestrainedTitle);
+            subscriber.restrictMovieByTitle(movieRestrainedTitle);
         }
     }
 
@@ -180,7 +182,7 @@ public class DAO {
         this.persistence.saveMovie(movieDetails);
     }
     public Movie loadMovie (String id) {
-        HashMap<String, String> movieDetails = this.persistence.loadSubscriber(id);
+        HashMap<String, String> movieDetails = this.persistence.loadMovie(id);
 
         if (movieDetails == null) {
             return null;
@@ -213,7 +215,17 @@ public class DAO {
         if (rentalDetails == null) {
             return null;
         }
-        return new Rental(UUID.fromString(rentalDetails.get("UUID")), this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))));
+
+        try {
+            return new Rental(UUID.fromString(rentalDetails.get("UUID")),
+                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
+                    DateFormat.getDateInstance().parse(rentalDetails.get("returnDate")),
+                    DateFormat.getDateInstance().parse(rentalDetails.get("rentingDate")));
+        } catch (ParseException e) {
+            return new Rental(UUID.fromString(rentalDetails.get("UUID")),
+                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
+                    null, null);
+        }
     }
 
     public void saveRental(Rental rental) {
@@ -221,5 +233,10 @@ public class DAO {
 
         rentalDetails.put("UUID", rental.getRentalId().toString());
         rentalDetails.put("movieId", rental.getMovie().getMovieId().toString());
+        rentalDetails.put("price", rental.getPricePerDay().toString());
+        rentalDetails.put("returnDate", rental.getReturnDate().toString());
+        rentalDetails.put("rentingDate", rental.getRentingDate().toString());
+
+        this.persistence.saveRental(rentalDetails);
     }
 }
