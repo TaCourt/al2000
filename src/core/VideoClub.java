@@ -18,7 +18,27 @@ public class VideoClub {
     private Map<Long, Rental> currentNonSubRentals;
     private Map<Long, Rental> historyNonSubRentals;
 
-    public VideoClub() {
+    public VideoClub () {
+
+    }
+
+    public void init () {
+        this.initFilmLibrary();
+
+        this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
+    }
+
+    private void initFilmLibrary () {
+        HashMap<Long, Movie> allMovies = this.dao.loadAllMovies();
+        HashMap<Long, Integer> availableMoviesId = this.dao.loadAvailableMovies();
+        HashMap<Long, Movie> availableMovies = new HashMap<Long, Movie>();
+
+        availableMoviesId.forEach((id, nbOfCopies) -> availableMovies.put(id, allMovies.get(id)));
+
+        List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
+                "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
+
+        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, availableMovies, availableMoviesId, categories);
     }
 
     public void setPersistence(Persistence persistence) {
@@ -33,6 +53,7 @@ public class VideoClub {
     public void launch() {
         setGui(new ConsoleUserInterface(this));
         gui.welcomePage();
+        this.currentSubscriber = null;
     }
 
     public String[] logIn(String numCarte) {
@@ -78,7 +99,7 @@ public class VideoClub {
      */
     public List<String[]> convertList(Map<Long, Movie> map) {
         List<String[]> toReturn = new LinkedList();
-        for (Long key : movieLibrary.getCyberVideoMovies().keySet()) {
+        for (Long key : map.keySet()) {
             String[] movie = new String[9];
             movie[0] = map.get(key).getAffiche();
             movie[1] = map.get(key).getTitle();
@@ -128,7 +149,7 @@ public class VideoClub {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), category));
         }
-        return convertList(movieLibrary.getMovieFromTitle(category));
+        return convertList(movieLibrary.getMovieByCategory(category));
     }
 
     /**
@@ -141,6 +162,7 @@ public class VideoClub {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null) {
             currentSubscriber.rentMovie(m);
+            movieLibrary.removeMovie(m);
         }
     }
 
@@ -213,6 +235,7 @@ public class VideoClub {
         for (ChildSubscriber child : children){
             if(child.getSubscriberId() == UUID.fromString(childId)){
                 child.restrictMovieByCategory(chosenCategory);
+                this.dao.save(child);
             }
         }
     }
@@ -232,6 +255,7 @@ public class VideoClub {
 
     public void restrictCategory(String chosenCategory) {
         currentSubscriber.restrictMovieByCategory(chosenCategory);
+        this.dao.save(currentSubscriber);
     }
 
     public String createNewSubscriber(String[] userData) {

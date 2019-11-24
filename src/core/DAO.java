@@ -5,6 +5,7 @@ import src.persistence.Persistence;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class DAO implements VideoClubDAO {
     private final String ADULT_SUBSCRIBER_ACCOUNT = "adultSubscriber";
@@ -53,6 +54,15 @@ public class DAO implements VideoClubDAO {
         subscriberDetails.put("UUID", subscriber.getSubscriberId().toString());
 
         this.persistence.saveSubscriber(subscriberDetails);
+    }
+
+    public void save (Subscriber subscriber) {
+        if (subscriber instanceof AdultSubscriber) {
+            this.save((AdultSubscriber) subscriber);
+        }
+        else if (subscriber instanceof AdultSubscriber) {
+            this.save((ChildSubscriber) subscriber);
+        }
     }
 
     public void save(AdultSubscriber adultSubscriber) {
@@ -124,15 +134,12 @@ public class DAO implements VideoClubDAO {
                 subscriberDetails.get("firstName"),
                 Double.parseDouble(subscriberDetails.get("balanceSubscriberCard")));
 
-        String[] splitString = subscriberDetails.get("children").split(",");
-        for (String childId : splitString) {
-            adultSubscriber.addChild(this.loadChildSubscriber(this.persistence.loadSubscriber(childId), adultSubscriber));
-        }
-        /*this.persistence.forEachSubscriber((_id, _userDetails) -> {
-            if ((_userDetails).get("account").equals(this.CHILD_SUBSCRIBER_ACCOUNT) && ((_userDetails).get("parent").equals(adultSubscriberId))) {
-                adultSubscriber.addChild(this.loadChildSubscriber(_userDetails, adultSubscriber));
+        if (subscriberDetails.get("children").length() != 0) {
+            String[] splitString = subscriberDetails.get("children").split(",");
+            for (String childId : splitString) {
+                adultSubscriber.addChild(this.loadChildSubscriber(this.persistence.loadSubscriber(childId), adultSubscriber));
             }
-        });*/
+        }
 
         loadSubscriber(subscriberDetails, adultSubscriber);
         return adultSubscriber;
@@ -140,30 +147,38 @@ public class DAO implements VideoClubDAO {
 
     private void loadSubscriber(HashMap<String, String> subscriberDetails, Subscriber subscriber) {
         String[] splitString;
-        splitString = subscriberDetails.get("categoryRestrained").split(",");
-        for (String category : splitString) {
-            subscriber.restrictMovieByTitle(category);
+        if (subscriberDetails.get("categoryRestrained").length() != 0) {
+            splitString = subscriberDetails.get("categoryRestrained").split(",");
+            for (String category : splitString) {
+                subscriber.restrictMovieByTitle(category);
+            }
         }
 
-        splitString = subscriberDetails.get("currentRentedMovies").split(",");
-        for (String currentRentalId : splitString) {
-            subscriber.addRental(this.loadRental(currentRentalId));
+        if (subscriberDetails.get("currentRentedMovies").length() != 0) {
+            splitString = subscriberDetails.get("currentRentedMovies").split(",");
+            for (String currentRentalId : splitString) {
+                subscriber.addRental(this.loadRental(currentRentalId));
+            }
         }
 
-        splitString = subscriberDetails.get("history").split(",");
-        for (String oldRentalId : splitString) {
-            subscriber.addRental(this.loadRental(oldRentalId));
+        if (subscriberDetails.get("history").length() != 0) {
+            splitString = subscriberDetails.get("history").split(",");
+            for (String oldRentalId : splitString) {
+                subscriber.addRental(this.loadRental(oldRentalId));
+            }
         }
 
-        splitString = subscriberDetails.get("moviesRestrained").split(",");
-        for (String movieRestrainedTitle : splitString) {
-            subscriber.restrictMovieByTitle(movieRestrainedTitle);
+        if (subscriberDetails.get("moviesRestrained").length() != 0) {
+            splitString = subscriberDetails.get("moviesRestrained").split(",");
+            for (String movieRestrainedTitle : splitString) {
+                subscriber.restrictMovieByTitle(movieRestrainedTitle);
+            }
         }
     }
 
 
     public void saveMovie (Movie movie) {
-        HashMap<String, String> movieDetails = new HashMap<String, String>();
+        HashMap<String, String> movieDetails = new HashMap<>();
 
         boolean isAvailable = movie.isAvailable();
 
@@ -178,8 +193,10 @@ public class DAO implements VideoClubDAO {
         movieDetails.put("duration", movie.getDuration().toString());
         movieDetails.put("available", Boolean.toString(isAvailable));
 
-        this.persistence.saveAvailableMovie(movie.getMovieId().toString(), isAvailable);
         this.persistence.saveMovie(movieDetails);
+    }
+    public void saveAvailableMovie (Movie movie, boolean isAvailable, int numberOfCopies) {
+        this.persistence.saveAvailableMovie(movie.getMovieId().toString(), isAvailable, numberOfCopies);
     }
     public Movie loadMovie (String id) {
         HashMap<String, String> movieDetails = this.persistence.loadMovie(id);
@@ -190,24 +207,28 @@ public class DAO implements VideoClubDAO {
 
         return new Movie(Long.parseLong(movieDetails.get("id")),
             movieDetails.get("affiche"),
-            movieDetails.get("titre"),
+            movieDetails.get("title"),
             movieDetails.get("category"),
             movieDetails.get("synopsis"),
             Integer.parseInt(movieDetails.get("duration")),
-            movieDetails.get("langue"),
+            movieDetails.get("language"),
             movieDetails.get("actor"),
             movieDetails.get("director"),
-            false);
+            Boolean.valueOf(movieDetails.get("available")));
     }
-    public List<Movie> loadAvailableMovies () {
-        List<Movie> movies = new ArrayList<Movie>();
-        String[] availableMovies = this.persistence.getAvailableMovies();
 
-        for (String movieId: availableMovies) {
-            movies.add(this.loadMovie(movieId));
-        }
+    public HashMap<Long, Movie> loadAllMovies () {
+        HashMap<Long, Movie> movies = new HashMap<Long, Movie>();
+
+        this.persistence.loadAllMoviesIds().forEach((id) -> {
+            movies.put(Long.valueOf(id), this.loadMovie(id));
+        });
 
         return movies;
+    }
+
+    public HashMap<Long, Integer> loadAvailableMovies () {
+        return this.persistence.getAvailableMovies();
     }
 
     public Rental loadRental(String currentRentalId) {
@@ -238,5 +259,11 @@ public class DAO implements VideoClubDAO {
         rentalDetails.put("rentingDate", rental.getRentingDate().toString());
 
         this.persistence.saveRental(rentalDetails);
+    }
+
+    public void forEachRental(Consumer<Rental> callback) {
+        this.persistence.loadAllRentalIds().forEach((id) -> {
+            callback.accept(this.loadRental((String) id));
+        });
     }
 }
