@@ -18,7 +18,35 @@ public class VideoClub {
     private Map<Long, Rental> currentNonSubRentals;
     private Map<Long, Rental> historyNonSubRentals;
 
-    public VideoClub() {
+    public VideoClub () {
+
+    }
+
+    public void init () {
+        this.initFilmLibrary();
+
+        this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
+
+
+        System.out.println(movieLibrary.getAvailableMovies());
+        System.out.println(movieLibrary.getAl2000Movies());
+    }
+
+    private void initFilmLibrary () {
+        HashMap<Long, Movie> allMovies = this.dao.loadAllMovies();
+        HashMap<Long, Integer> availableMoviesId = this.dao.loadAvailableMovies();
+        HashMap<Long, Movie> availableMovies = new HashMap<Long, Movie>();
+
+        availableMoviesId.forEach((id, nbOfCopies) -> availableMovies.put(id, allMovies.get(id)));
+
+        List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
+                "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
+
+        System.out.println(allMovies);
+        System.out.println(availableMoviesId);
+        System.out.println(availableMovies);
+
+        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, availableMovies, availableMoviesId, categories);
     }
 
     public void setPersistence(Persistence persistence) {
@@ -78,7 +106,7 @@ public class VideoClub {
      */
     public List<String[]> convertList(Map<Long, Movie> map) {
         List<String[]> toReturn = new LinkedList();
-        for (Long key : movieLibrary.getCyberVideoMovies().keySet()) {
+        for (Long key : map.keySet()) {
             String[] movie = new String[9];
             movie[0] = map.get(key).getAffiche();
             movie[1] = map.get(key).getTitle();
@@ -139,6 +167,7 @@ public class VideoClub {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null) {
             currentSubscriber.rentMovie(m);
+            movieLibrary.removeMovie(m);
         }
     }
 
