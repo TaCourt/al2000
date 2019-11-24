@@ -166,7 +166,7 @@ public class ConsoleUserInterface implements UserInterface {
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un nom de catégorie valide");
         }else{
-            List<String[]> moviesOfCategory = videoClub.getMoviesOfCategory(chosenCategory);
+            List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
             printMovieList(moviesOfCategory);
         }
 
@@ -175,7 +175,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     public void searchAMovie(){
         String searchedTitle = printSearchFromTitle();
-        List<String[]> movies = videoClub.getMovieFromTitle(searchedTitle);
+        List<String[]> movies = videoClub.getMovieByTitle(searchedTitle);
         if (movies == null) {
             System.err.println("Aucun film n'a été trouvé ayant ce titre, vérifiez l'orthograpge.");
         }else{

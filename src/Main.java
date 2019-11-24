@@ -9,7 +9,7 @@ import java.io.IOException;
 class Main {
     public static void main (String[] args){
         VideoClub videoClub = new VideoClub();
-        videoClub.launch();
+
 
         try {
             videoClub.setPersistence(new JSONPersistence());
@@ -19,6 +19,7 @@ class Main {
             e.printStackTrace();
         }
 
+        videoClub.launch();
     }
 
     public static void testLoadParentUser (VideoClub v) {

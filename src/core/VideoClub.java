@@ -32,10 +32,12 @@ public class VideoClub {
 
     public void launch() {
         setGui(new ConsoleUserInterface(this));
+        gui.welcomePage();
     }
 
     public String[] logIn (String numCarte) {
         this.currentSubscriber = this.dao.loadSubscriber(numCarte);
+
         String[] infosUser = new String[2];
 
         if( currentSubscriber == null){
@@ -50,8 +52,6 @@ public class VideoClub {
 
     public void logOut (){
         this.currentSubscriber = null;
-//        LambdaUserFactory lUserFac = new LambdaUserFactory();
-//        this.defaultUser = (LambdaUser) lUserFac.makeUser();
     }
 
     public void addTechnicians(Technician technician) {
@@ -161,9 +161,6 @@ public class VideoClub {
             movieLibrary.addMovie(m);
         }
     }
-
-
-
 
     public boolean exists(String identifiant) {
         Movie movie = movieLibrary.getMovie(identifiant);
