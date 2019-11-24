@@ -232,10 +232,11 @@ public class VideoClub {
         currentSubscriber.restrictMovieByCategory(chosenCategory);
     }
 
-    public void createNewSubscriber(String[] userData) {
+    public String createNewSubscriber(String[] userData) {
         AdultSubscriberFactory userFactory = new AdultSubscriberFactory();
         Subscriber subscriber = userFactory.makeUser(userData[0], userData[1], userData[2]);
         this.dao.save((AdultSubscriber) subscriber);
+        return subscriber.getSubscriberId().toString();
     }
 
     public void createNewChildSubscriber(String[] userData) {

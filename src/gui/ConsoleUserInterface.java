@@ -61,10 +61,12 @@ public class ConsoleUserInterface implements UserInterface {
         String validationWord = printUserFormFinalValidation();
 
         if(validationWord.equals("valider")){
-            videoClub.createNewSubscriber(userData);
+            String id = videoClub.createNewSubscriber(userData);
             System.out.println("Opération validée.");
             System.out.println("Faites une demande de carte " +
                     "d'abonné pour vous connecter lors de votre prochaine visite");
+            System.out.println("Voilà votre numéro d'identification :");
+            System.out.println(id);
         }else if( validationWord.equals("annuler")){
             System.out.println("Opération annulée.");
         }
@@ -183,7 +185,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    private void manageChildRestriction(){
+    private void manageChildRestrictionCategory(){
         MenuHandler menu = new MenuHandler();
         Map<String,String> names = videoClub.getChildrenNames();
         int userChoice = printChildRestrictPage(menu,names);
@@ -452,7 +454,7 @@ public class ConsoleUserInterface implements UserInterface {
                 break;
 
             case "childRestrictions":
-                manageChildRestriction();
+                manageChildRestrictionCategory();
                 break;
 
             case "accountManagement":
