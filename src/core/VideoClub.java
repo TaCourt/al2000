@@ -53,6 +53,7 @@ public class VideoClub {
     public void launch() {
         setGui(new ConsoleUserInterface(this));
         gui.welcomePage();
+        this.currentSubscriber = null;
     }
 
     public String[] logIn(String numCarte) {
@@ -146,7 +147,7 @@ public class VideoClub {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), category));
         }
-        return convertList(movieLibrary.getMovieFromTitle(category));
+        return convertList(movieLibrary.getMovieByCategory(category));
     }
 
     /**

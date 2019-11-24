@@ -176,7 +176,7 @@ public class ConsoleUserInterface implements UserInterface {
     private void searchAMovie(){
         String searchedTitle = printSearchFromTitle();
         List<String[]> movies = videoClub.getMovieByTitle(searchedTitle);
-        if (movies == null) {
+        if (movies.isEmpty()) {
             System.err.println("Aucun film n'a été trouvé ayant ce titre, vérifiez l'orthograpge.");
         }else{
             printMovieList(movies);
@@ -286,7 +286,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Pour louer un film, saisissez l'identifiant du film :");
         System.out.println();
         Scanner scanner = new Scanner(System.in);
-        String id = scanner.next();
+        String id = scanner.nextLine();
         if( id == null ){
             return "";
         }else{
@@ -304,7 +304,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Recherche à partir d'un titre");
         System.out.println("Entrez le titre du film que vous cherchez :");
         Scanner scanner = new Scanner(System.in);
-        String titre = scanner.next();
+        String titre = scanner.nextLine();
         if( titre == null ){
             return "";
         }else{
@@ -323,7 +323,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println();
         System.out.println("Entrez le nom de la catégorie à filtrer :");
         Scanner scanner = new Scanner(System.in);
-        String chosenCategory = scanner.next();
+        String chosenCategory = scanner.nextLine();
         if( chosenCategory == null ){
             return "";
         }else{
@@ -336,7 +336,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Ceci nous aide grandement à faire évoluer notre système");
         System.out.println("Expliquez nous ce qu'il s'est passé en une ligne :");
         Scanner scanner = new Scanner(System.in);
-        String report = scanner.next();
+        String report = scanner.nextLine();
         if( report == null ){
             return "";
         }else{
@@ -348,7 +348,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.err.println("Pour simuler l'acquisition du film par la machine, on fait remplir son id au client.");
         System.out.println("Pour rendre un film, veuillez composer son identifiant :");
         Scanner scanner = new Scanner(System.in);
-        String idReturnedMovie = scanner.next();
+        String idReturnedMovie = scanner.nextLine();
         if( idReturnedMovie == null ){
             return "";
         }else{
@@ -364,14 +364,14 @@ public class ConsoleUserInterface implements UserInterface {
     private String getStringFromUser(String text){
         System.out.println(text);
         Scanner scanner = new Scanner(System.in);
-        String userEntry = scanner.next();
+        String userEntry = scanner.nextLine();
         if( userEntry == null ){
             userEntry = "";
         }
         while( userEntry == null || userEntry.isEmpty() ){
             System.err.println("Format invalide, entrez");
             System.out.println(text);
-            userEntry = scanner.next();
+            userEntry = scanner.nextLine();
         }
         return userEntry;
     }
@@ -393,7 +393,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Connexion :");
         System.out.println();
         System.out.println("Passez votre carte sur le lecteur, ou entrez son numéro ci-après :");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     private int printChildRestrictPage(MenuHandler menu, Map<String,String> names){

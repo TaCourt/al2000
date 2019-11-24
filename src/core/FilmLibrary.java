@@ -42,6 +42,8 @@ public class FilmLibrary{
         switch(component) {
             case "titre" :
                 for (Long key : al2000Movies.keySet()) {
+                    System.out.println(al2000Movies.get(key).getTitle());
+                    System.out.println(componentValue);
                     if (al2000Movies.get(key).getTitle().equals(componentValue)) {
                         toReturn.put(key, al2000Movies.get(key));
                     }
@@ -110,12 +112,12 @@ public class FilmLibrary{
         return filter(restrainedCategory, restrainedMovie, toReturn);
     }
 
-    public Movie getMovie(String id) {
-        return al2000Movies.get(Long.parseLong(id));
-    }
-
     public Map<Long, Movie> getMovieByCategory(String category) {
         return search("categorie", category);
+    }
+
+    public Movie getMovie(String id) {
+        return al2000Movies.get(Long.parseLong(id));
     }
 
     public List<String> getCategoriesSet() {
