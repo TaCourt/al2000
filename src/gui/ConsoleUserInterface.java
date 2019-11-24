@@ -1,15 +1,16 @@
 package src.gui;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ConsoleUserInterface implements UserInterface {
 
-     src.core.VideoClub videoClub;
+     private src.core.VideoClub videoClub;
 
-     String prenom;
-     String nom;
-     Boolean isConnected;
+     private String prenom;
+     private String nom;
+     private Boolean isConnected;
 
     //Interface parent --> afficher historique enfant + restreindre cat enfant.
     // Interface enfant, pas d'option de restriction
@@ -24,8 +25,9 @@ public class ConsoleUserInterface implements UserInterface {
 
     @Override
     public void welcomePage() {
-        int userChoice = printWelcomeMenu();
-        redirectFromWelcomePage(userChoice);
+        MenuHandler menu = new MenuHandler();
+        int userChoice = printMenu(menu);
+        redirect(menu.getKeyword(userChoice));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    public void availableMovies() {
+    private void availableMovies() {
         List<String[]> movies = videoClub.getAvailableMovies();
         printMovieList(movies);
         redirectToMainMenu();
@@ -155,12 +157,8 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    public void welcomeSubscriberPage(String prenom, String nom){
-        int userChoice = printWelcomeMenuSubscriber(prenom,nom);
-        redirectFromMainSubscriberMenu(userChoice);
-    }
 
-    public void searchACategory(){
+    private void searchACategory(){
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
@@ -173,7 +171,7 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
-    public void searchAMovie(){
+    private void searchAMovie(){
         String searchedTitle = printSearchFromTitle();
         List<String[]> movies = videoClub.getMovieByTitle(searchedTitle);
         if (movies == null) {
@@ -185,62 +183,74 @@ public class ConsoleUserInterface implements UserInterface {
         redirectToMainMenu();
     }
 
+    private void manageChildRestriction(){
+        MenuHandler menu = new MenuHandler();
+        Map<String,String> names = videoClub.getChildrenNames();
+        int userChoice = printChildRestrictPage(menu,names);
+
+        System.out.println("Maintenant, choisissez la catégorie à limiter.");
+        List<String> categories = videoClub.getCategories();
+        String chosenCategory = printCategoryList(categories);
+        if (chosenCategory.isEmpty()){
+            System.err.println("Erreur : entrez un nom de catégorie valide");
+        }else{
+            videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
+            System.out.println("Opération enregistré");
+            System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de ses prochaines recherches");
+        }
+
+        redirectToMainMenu();
+    }
+
 
     // ---------------------------------------------------------
     // Méthodes d'affichage et de récupérations d'informations
     // ---------------------------------------------------------
 
 
-    private String printSignInPage(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Connexion :");
-        System.out.println();
-        System.out.println("Passez votre carte sur le lecteur, ou entrez son numéro ci-après :");
-        String numCarte = scanner.next();
-
-        return numCarte;
-    }
-
-    private int printWelcomeMenu(){
-        System.out.println("-----------------------------------------------");
-        System.out.println("-----  Bienvenue chez Cyber Vidéo !!  ---------");
-        System.out.println("-----------------------------------------------");
-        System.out.println();
-        MenuHandler menu = new MenuHandler();
-        menu.addOption("Vous avez un compte ? Connectez-vous.");
-        menu.addOption("Lister les films disponible");
-        menu.addOption("Lister tous les films de cet AL2000 (même ceux loués actuellement)");
-        menu.addOption("Lister tous les films chez cyberVideo");
-        menu.addOption("Rechercher un film par titre");
-        menu.addOption("Afficher les films disponible d'une catégorie");
-        menu.addOption("Louer un film");
-        menu.addOption("Retourner un film");
-        menu.addOption("Signaler un bug");
-        menu.addOption("Créer un compte");
-        return menu.getIntResponse();
-    }
-
-    private int printWelcomeMenuSubscriber(String prenom, String nom){
+    private void printMenuHeader(String prenom, String nom){
         System.out.println("--------------------------------------------------");
         System.out.println("------- Ravi de vous revoir " + prenom + " " + nom + " ! -------");
         System.out.println("--------------------------------------------------");
         System.out.println();
-        return printSubscriberMainMenu();
     }
 
-    private int printSubscriberMainMenu(){
-        MenuHandler menu = new MenuHandler();
-        menu.addOption("Lister les films disponible");
-        menu.addOption("Lister tous les films de cet AL2000 (même ceux loués actuellement)");
-        menu.addOption("Lister tous les films chez cyberVideo");
-        menu.addOption("Rechercher un film par titre");
-        menu.addOption("Afficher les films disponible d'une catégorie");
-        menu.addOption("Louer un film");
-        menu.addOption("Retourner un film");
-        menu.addOption("Gérer mon compte");
-        menu.addOption("Signaler un bug");
-        menu.addOption("Créer un compte parrainé pour un enfant");
-        menu.addOption("Déconnexion");
+    private void printWelcomeHeader(){
+        System.out.println("-----------------------------------------------");
+        System.out.println("-----  Bienvenue chez Cyber Vidéo !!  ---------");
+        System.out.println("-----------------------------------------------");
+        System.out.println();
+    }
+
+    private int printMenu(MenuHandler menu){
+        if( isConnected ){
+            printMenuHeader(prenom,nom);
+        }else{
+            printWelcomeHeader();
+        }
+
+        menu.addOption("Lister les films disponible","availableMovies");
+        menu.addOption("Lister tous les films de cet AL2000 (même ceux loués actuellement)","supposedAvailableMovies");
+        menu.addOption("Lister tous les films chez cyberVideo","cyberVideoMovies");
+        menu.addOption("Rechercher un film par titre","searchByTitle");
+        menu.addOption("Afficher les films disponible d'une catégorie","searchByCategory");
+        menu.addOption("Louer un film","rentAMovie");
+        menu.addOption("Retourner un film","returnAMovie");
+        menu.addOption("Signaler un bug","reportABug");
+
+        if( videoClub.canAccessChildAccountCreationPage())
+            menu.addOption("Créer un compte parrainé pour un enfant","createChildAccount");
+
+        if( videoClub.canAccessChildRestrictionPage() )
+            menu.addOption("Gérer les restrictions de vos enfants","childRestrictions");
+
+        if( isConnected ){
+            menu.addOption("Gérer mon compte","accountManagement");
+            menu.addOption("Déconnexion","logOut");
+        }else{
+            menu.addOption("Créer un compte","signUp");
+            menu.addOption("Vous avez un compte ? Connectez-vous.","signIn");
+        }
 
         return menu.getIntResponse();
     }
@@ -376,100 +386,91 @@ public class ConsoleUserInterface implements UserInterface {
         return validationWord;
     }
 
+    private String printSignInPage(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Connexion :");
+        System.out.println();
+        System.out.println("Passez votre carte sur le lecteur, ou entrez son numéro ci-après :");
+        return scanner.next();
+    }
+
+    private int printChildRestrictPage(MenuHandler menu, Map<String,String> names){
+        System.out.println("Ici vous pouvez restreindre l'acces à certaines catégories, pour vos enfants. ");
+        System.out.println("Pour commencer,choisissez à qui vous voulez appliquer ce filtre :");
+
+        for(Map.Entry<String, String> entry : names.entrySet()) {
+            String cle = entry.getKey();
+            String valeur = entry.getValue();
+            menu.addOption(valeur,cle);
+        }
+
+        return menu.getIntResponse();
+    }
+
 
 
     // ---------------------------------------------------------
     // Méthodes de redirection en fonction du choix utilisateur.
     // ---------------------------------------------------------
 
-    private void redirectFromWelcomePage(int userChoice){
-        switch(userChoice){
-            case 1:
-                signIn();
-                break;
-
-            case 2:
+    private void redirect(String userChoiceKeyWord){
+        switch(userChoiceKeyWord){
+            case "availableMovies":
                 availableMovies();
                 break;
 
-            case 3:
+            case "supposedAvailableMovies":
                 supposedAvailableMovies();
                 break;
 
-            case 4:
+            case "cyberVideoMovies":
                 cyberVideoMovies();
                 break;
 
-            case 5:
+            case "searchByTitle":
                 searchAMovie();
                 break;
 
-            case 6:
+            case "searchByCategory":
                 searchACategory();
                 break;
 
-            case 7:
+            case "rentAMovie":
                 rentMovie();
                 break;
 
-            case 8:
+            case "returnAMovie":
                 returnMovie();
                 break;
 
-            case 9:
+            case "reportABug":
                 reportABug();
                 break;
 
-            case 10:
-                signUp();
-                break;
-        }
-    }
-
-    private void redirectFromMainSubscriberMenu(int userChoice) {
-        switch(userChoice){
-            case 1:
-                availableMovies();
-
-            case 2:
-                supposedAvailableMovies();
-                break;
-
-            case 3:
-                cyberVideoMovies();
-                break;
-
-            case 4:
-                searchAMovie();
-                break;
-
-            case 5:
-                searchACategory();
-                break;
-
-            case 6:
-                rentMovie();
-                break;
-
-            case 7:
-                returnMovie();
-                break;
-
-            case 8:
-                accountManagement();
-                break;
-
-            case 9:
-                reportABug();
-                break;
-
-            case 10:
+            case "createChildAccount":
                 signUpForChild();
                 break;
 
-            case 11:
+            case "childRestrictions":
+                manageChildRestriction();
+                break;
+
+            case "accountManagement":
+                accountManagement();
+                break;
+
+            case "logOut":
                 signOut();
                 break;
+
+            case "signUp":
+                signUp();
+                break;
+
+            case "signIn":
+                signIn();
+                break;
+
         }
     }
 
@@ -480,24 +481,15 @@ public class ConsoleUserInterface implements UserInterface {
             isConnected = true;
             this.prenom = prenom;
             this.nom = nom;
-            welcomeSubscriberPage(prenom,nom);
         } else {
             printLoginFailedMessage();
-            welcomePage();
         }
+        redirectToMainMenu();
     }
 
     private void redirectToMainMenu(){
-
         System.out.println("------------------------------------------");
-        if(isConnected){
-            int userChoice = printSubscriberMainMenu();
-            redirectFromMainSubscriberMenu(userChoice);
-        }else{
-            int userChoice = printWelcomeMenu();
-            redirectFromWelcomePage(userChoice);
-        }
-
+        welcomePage();
     }
 
 }

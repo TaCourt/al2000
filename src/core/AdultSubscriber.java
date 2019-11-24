@@ -41,4 +41,9 @@ public class AdultSubscriber extends Subscriber {
     public List<ChildSubscriber> getChildren() {
         return new ArrayList<ChildSubscriber>(this.children);
     }
+
+    @Override
+    public boolean canAccessChildRestrictionPage(){return true;}
+    public boolean canAccessChildAccountCreationPage(){return true;}
+
 }

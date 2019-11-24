@@ -136,4 +136,7 @@ public abstract class Subscriber {
     public void showChildHistory() {
         System.out.println("Il faut avoir des enfants pour afficher l'historique d'un enfant");
     }
+
+    public boolean canAccessChildRestrictionPage(){return false;}
+    public boolean canAccessChildAccountCreationPage(){return false;}
 }

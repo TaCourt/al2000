@@ -15,4 +15,9 @@ public class ChildSubscriber extends Subscriber {
     public AdultSubscriber getParent () {
         return this.parent;
     }
+
+    @Override
+    public boolean canAccessChildRestrictionPage(){return false;}
+    public boolean canAccessChildAccountCreationPage(){return false;}
+
 }

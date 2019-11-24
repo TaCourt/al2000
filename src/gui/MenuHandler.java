@@ -7,16 +7,23 @@ public class MenuHandler {
 
     // Map pour garantir l'unicité des clés
     private Map<Integer,String> options;
+    private Map<Integer,String> keywords;
     private Integer optionsCount;
 
     public MenuHandler(){
         optionsCount = 0;
         options = new HashMap<>();
+        keywords = new HashMap<>();
     }
 
-    public void addOption(String line){
+    public void addOption(String line, String keyword){
         optionsCount++;
         options.put(optionsCount,line);
+        keywords.put(optionsCount,keyword);
+    }
+
+    public String getKeyword(int optionNumber){
+        return keywords.get(optionNumber);
     }
 
     public Integer getIntResponse(){

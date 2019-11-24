@@ -26,7 +26,7 @@ public class VideoClub {
         this.dao.setPersistence(persistence);
     }
 
-    public void setGui(UserInterface gui){
+    public void setGui(UserInterface gui) {
         this.gui = gui;
     }
 
@@ -35,22 +35,22 @@ public class VideoClub {
         gui.welcomePage();
     }
 
-    public String[] logIn (String numCarte) {
+    public String[] logIn(String numCarte) {
         this.currentSubscriber = this.dao.loadSubscriber(numCarte);
 
         String[] infosUser = new String[2];
 
-        if( currentSubscriber == null){
+        if (currentSubscriber == null) {
             infosUser[1] = "";
             infosUser[0] = "";
-        }else{
+        } else {
             infosUser[0] = currentSubscriber.getFirstName();
             infosUser[1] = currentSubscriber.getName();
         }
         return infosUser;
     }
 
-    public void logOut (){
+    public void logOut() {
         this.currentSubscriber = null;
     }
 
@@ -72,6 +72,7 @@ public class VideoClub {
 
     /**
      * Convertis une map de film en liste de tableau de String
+     *
      * @param map la map de film à convertire
      * @return la liste de tableau de String
      */
@@ -131,6 +132,7 @@ public class VideoClub {
     /**
      * Location d'un film pour les abonnées : Verifie que l'utilisateur soit bien connecté et que le film existe bien
      * puis effectue la location.
+     *
      * @param idMovie : l'identifiant du film que l'utilisateur veut louer
      */
     public void rentMovie(String idMovie) {
@@ -143,7 +145,8 @@ public class VideoClub {
     /**
      * Location d'un film pour les non abonnées : Verifie que l'utilisateur n'a pas deja une location en cour
      * puis creer la location et l'ajoute à la liste des locations des utilisateurs non abonées.
-     * @param idMovie : l'identifiant du film que l'utilisateur veut louer
+     *
+     * @param idMovie    : l'identifiant du film que l'utilisateur veut louer
      * @param creditCard : la carte de crédit de l'utilisateur
      */
     public void rentMovie(String idMovie, long creditCard) {
@@ -162,6 +165,7 @@ public class VideoClub {
 
     /**
      * Retour d'un film pour des abonées. Vérifie que l'utilisateur est bien connecté puis effectue le retour.
+     *
      * @param idMovieReturned
      * @return le prix de la location
      */
@@ -177,8 +181,9 @@ public class VideoClub {
     /**
      * Retour d'un film pour des non abonées. Supprime la location correspondante de la liste des locations des utilisateurs non abonées.
      * Ajoute la location à l'historique des locations des utilisateurs non abonées.
+     *
      * @param idMovieReturned : l'identifiant du film que l'utilisateurs rend
-     * @param creditCard : la carte de crédit de l'utilisaetur
+     * @param creditCard      : la carte de crédit de l'utilisaetur
      * @return le prix de la location
      */
     public Double returnMovie(String idMovieReturned, long creditCard) {
@@ -200,6 +205,25 @@ public class VideoClub {
         }
     }
 
+    public void restrictCategoryForChild(String childId,String chosenCategory){
+        AdultSubscriber parent = (AdultSubscriber) currentSubscriber;
+        List<ChildSubscriber> children = parent.getChildren();
+        for (ChildSubscriber child : children){
+            if(child.getSubscriberId() == UUID.fromString(childId)){
+                child.restrictMovieByCategory(chosenCategory);
+            }
+        }
+    }
+
+    public Map<String,String> getChildrenNames(){
+        List<ChildSubscriber> children = ((AdultSubscriber) currentSubscriber).getChildren();
+        Map<String,String> names = new HashMap<>();
+        for(ChildSubscriber child : children){
+            names.put(child.getSubscriberId().toString(),child.getFirstName()+" "+child.getName());
+        }
+        return names;
+    }
+
     public List<String> getCategories() {
         return movieLibrary.getCategoriesSet();
     }
@@ -218,5 +242,17 @@ public class VideoClub {
         ChildSubscriberFactory userFactory = new ChildSubscriberFactory();
         Subscriber subscriber = userFactory.makeUser(userData[0], userData[1], (AdultSubscriber) currentSubscriber);
         this.dao.save((ChildSubscriber) subscriber);
+    }
+
+    public boolean canAccessChildRestrictionPage() {
+        if (currentSubscriber != null)
+            return currentSubscriber.canAccessChildRestrictionPage();
+        return false;
+    }
+    public boolean canAccessChildAccountCreationPage(){
+        if (currentSubscriber != null){
+            return currentSubscriber.canAccessChildAccountCreationPage();
+        }
+        return false;
     }
 }
