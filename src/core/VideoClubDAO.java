@@ -11,7 +11,7 @@ public interface VideoClubDAO {
         Subscriber loadSubscriber (String id);
         void saveMovie (Movie movie);
         Movie loadMovie (String id);
-        List<Movie> loadAvailableMovies ();
+        List<Movie> loadAvailableMovies();
         Rental loadRental(String currentRentalId);
         void saveRental(Rental rental);
     }

@@ -105,6 +105,8 @@ public class VideoClub {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getAvailableMovies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
         }
+
+
         return convertList(movieLibrary.getAvailableMovies());
     }
 

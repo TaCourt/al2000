@@ -8,8 +8,8 @@ public class ConsoleUserInterface implements UserInterface {
 
      private src.core.VideoClub videoClub;
 
-     private String prenom;
-     private String nom;
+     private String firstName;
+     private String lastName;
      private Boolean isConnected;
 
     //Interface parent --> afficher historique enfant + restreindre cat enfant.
@@ -98,7 +98,7 @@ public class ConsoleUserInterface implements UserInterface {
     public void signIn() {
         String numCarte = printSignInPage();
         String[] infosUser = videoClub.logIn(numCarte);
-        redirectFromLoginPage(infosUser); // set isConnected, prenom et nom
+        redirectFromLoginPage(infosUser); // set isConnected, firstName et lastName
     }
 
 
@@ -109,7 +109,7 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un nom de catégorie valide");
+            System.err.println("Erreur : entrez un lastName de catégorie valide");
         }else{
             videoClub.restrictCategory(chosenCategory);
             System.out.println("Opération enregistré");
@@ -152,8 +152,8 @@ public class ConsoleUserInterface implements UserInterface {
 
 
     public void signOut(){
-        this.prenom = "";
-        this.nom = "";
+        this.firstName = "";
+        this.lastName = "";
         this.isConnected = false;
         videoClub.logOut();
         redirectToMainMenu();
@@ -164,7 +164,7 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un nom de catégorie valide");
+            System.err.println("Erreur : entrez un lastName de catégorie valide");
         }else{
             List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
             printMovieList(moviesOfCategory);
@@ -194,7 +194,7 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un nom de catégorie valide");
+            System.err.println("Erreur : entrez un lastName de catégorie valide");
         }else{
             videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
             System.out.println("Opération enregistré");
@@ -226,7 +226,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     private int printMenu(MenuHandler menu){
         if( isConnected ){
-            printMenuHeader(prenom,nom);
+            printMenuHeader(firstName, lastName);
         }else{
             printWelcomeHeader();
         }
@@ -321,7 +321,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Voici la liste des catégories disponible :");
         System.out.println(categories.toString());
         System.out.println();
-        System.out.println("Entrez le nom de la catégorie à filtrer :");
+        System.out.println("Entrez le lastName de la catégorie à filtrer :");
         Scanner scanner = new Scanner(System.in);
         String chosenCategory = scanner.next();
         if( chosenCategory == null ){
@@ -481,8 +481,8 @@ public class ConsoleUserInterface implements UserInterface {
         String nom = userInfos[1];
         if (!prenom.isEmpty() || !nom.isEmpty()) {
             isConnected = true;
-            this.prenom = prenom;
-            this.nom = nom;
+            this.firstName = prenom;
+            this.lastName = nom;
         } else {
             printLoginFailedMessage();
         }
