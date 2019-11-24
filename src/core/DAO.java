@@ -198,14 +198,14 @@ public class DAO implements VideoClubDAO {
 
         return new Movie(Long.parseLong(movieDetails.get("id")),
             movieDetails.get("affiche"),
-            movieDetails.get("titre"),
+            movieDetails.get("title"),
             movieDetails.get("category"),
             movieDetails.get("synopsis"),
             Integer.parseInt(movieDetails.get("duration")),
-            movieDetails.get("langue"),
+            movieDetails.get("language"),
             movieDetails.get("actor"),
             movieDetails.get("director"),
-            false);
+            Boolean.valueOf(movieDetails.get("available")));
     }
 
     public HashMap<Long, Movie> loadAllMovies () {

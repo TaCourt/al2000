@@ -26,10 +26,6 @@ public class VideoClub {
         this.initFilmLibrary();
 
         this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
-
-
-        System.out.println(movieLibrary.getAvailableMovies());
-        System.out.println(movieLibrary.getAl2000Movies());
     }
 
     private void initFilmLibrary () {
@@ -41,10 +37,6 @@ public class VideoClub {
 
         List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
                 "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
-
-        System.out.println(allMovies);
-        System.out.println(availableMoviesId);
-        System.out.println(availableMovies);
 
         this.movieLibrary = new FilmLibrary(allMovies, availableMovies, availableMovies, availableMoviesId, categories);
     }

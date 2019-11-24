@@ -34,6 +34,18 @@ class Main {
         System.out.println("UUID : " + u.getSubscriberId().toString());
     }
 
+    public static void testLoadMovie (VideoClub v) {
+        v.logIn("a6c21b11-a26f-4529-895d-8ff84f1398a7");
+        AdultSubscriber u = (AdultSubscriber) v.getCurrentSubscriber();
+        System.out.println("Children : " + u.getChildren());
+        System.out.println("name : " + u.getName());
+        System.out.println("firstName : " + u.getFirstName());
+        System.out.println("creditCard : " + Long.toString(u.getCreditCard()));
+        System.out.println("balanceSubscriberCard : " + Double.toString(u.getBalanceSubscriberCard()));
+        System.out.println("maxMovieRented : " + Integer.toString(u.getMaxMovieRented()));
+        System.out.println("UUID : " + u.getSubscriberId().toString());
+    }
+
     public static void saveMovie (VideoClub v) throws IOException, ParseException {
         /*VideoClubDAO dao = v.getDao();
 
