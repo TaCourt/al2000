@@ -6,7 +6,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.function.BiConsumer;
+import java.util.Set;
 
 public class JSONPersistence implements Persistence {
     private final String filePath = new File("").getAbsolutePath();
@@ -85,12 +85,13 @@ public class JSONPersistence implements Persistence {
      * Ajoute/supprime un film dans la base de données des films disponibles
      * @param id id du film à sauvegarder
      * @param isAvailable indique si le film est disponible physiquement ou non
+     * @param numberOfCopies nombre de copies restantes
      */
     @Override
-    public void saveAvailableMovie (String id, boolean isAvailable) {
+    public void saveAvailableMovie (String id, boolean isAvailable, int numberOfCopies) {
         if (isAvailable == (this.AVAILABLE_MOVIE_JSON_DB.get(id) != null)) return;
 
-        if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, "");
+        if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, numberOfCopies);
         else if (this.AVAILABLE_MOVIE_JSON_DB.get(id) != null) this.AVAILABLE_MOVIE_JSON_DB.remove(id);
 
         this.saveToFile(this.AVAILABLE_MOVIE_DB, this.AVAILABLE_MOVIE_JSON_DB);
@@ -100,13 +101,9 @@ public class JSONPersistence implements Persistence {
      * Charge tous les films disponibles physiquement
      * @return un tableau de string contenant les id des films disponibles physiquement
      */
-    public String[] getAvailableMovies () {
-        String[] availableMovies = new String[this.AVAILABLE_MOVIE_JSON_DB.keySet().size()];
-
-        for (int i = 0; i < this.AVAILABLE_MOVIE_JSON_DB.keySet().size(); i++) {
-            int finalI = i;
-            this.AVAILABLE_MOVIE_JSON_DB.forEach((key, value) -> availableMovies[finalI] = String.valueOf(key));
-        }
+    public HashMap<Long, Integer> getAvailableMovies () {
+        HashMap<Long, Integer> availableMovies = new HashMap<Long, Integer>();
+        this.AVAILABLE_MOVIE_JSON_DB.forEach((key, value) -> availableMovies.put(Long.parseLong((String) key), Integer.parseInt((String.valueOf(value)))));
 
         return availableMovies;
     }
@@ -167,10 +164,20 @@ public class JSONPersistence implements Persistence {
         return null;
     }
 
-    public void forEachSubscriber(BiConsumer<String, HashMap<String, String>> callback) {
-        this.SUBSCRIBER_JSON_DB.forEach((id, userDetails) -> {
-            callback.accept((String) id, (HashMap<String, String>) userDetails);
-        });
+    /**
+     * Charge les ids de toutes les locations
+     * @return Set des ids de toutes les locations
+     */
+    public Set<String> loadAllRentalIds () {
+        return this.RENTAL_JSON_DB.keySet();
+    }
+
+    /**
+     * Charge les ids de tous les films
+     * @return Set des ids de tous les films
+     */
+    public Set<String> loadAllMoviesIds () {
+        return this.MOVIE_JSON_DB.keySet();
     }
 
 }

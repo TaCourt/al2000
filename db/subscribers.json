@@ -1,1 +1,72 @@
-{"5a60add7-eecd-4629-b4eb-98922951dc7b":{"moviesRestrained":"","parent":"a6c21b11-a26f-4529-895d-8ff84f1398a7","firstName":"","balanceSubscriberCard":"0.0","currentRentedMovies":"","categoryRestrained":"","name":"","history":"","creditCard":"0","maxMovieRented":"3","UUID":"5a60add7-eecd-4629-b4eb-98922951dc7b","account":"childSubscriber"},"db1b5f61-4444-4c1d-8862-9476212a9718":{"currentRental":"","creditCard":"0","UUID":"db1b5f61-4444-4c1d-8862-9476212a9718","account":"lambdaUser"},"9bf2f972-6857-4ba1-9f36-77ba9f3f6ec0":{"moviesRestrained":"","firstName":"tanguy","balanceSubscriberCard":"0.0","currentRentedMovies":"","categoryRestrained":"","children":"","name":"Court","history":"","creditCard":"13456789","maxMovieRented":"3","UUID":"9bf2f972-6857-4ba1-9f36-77ba9f3f6ec0","account":"adultSubscriber"},"a6c21b11-a26f-4529-895d-8ff84f1398a7":{"moviesRestrained":"","firstName":"Jean","balanceSubscriberCard":"0.0","currentRentedMovies":"0","categoryRestrained":"","children":"97083b2d-3b6c-4cd1-abaf-d777b27e70c2,5a60add7-eecd-4629-b4eb-98922951dc7b","name":"Paul","history":"","creditCard":"0123456789","maxMovieRented":"3","UUID":"a6c21b11-a26f-4529-895d-8ff84f1398a7","account":"adultSubscriber"},"97083b2d-3b6c-4cd1-abaf-d777b27e70c2":{"moviesRestrained":"","parent":"a6c21b11-a26f-4529-895d-8ff84f1398a7","firstName":"","balanceSubscriberCard":"0.0","currentRentedMovies":"","categoryRestrained":"","name":"","history":"","creditCard":"0","maxMovieRented":"3","UUID":"97083b2d-3b6c-4cd1-abaf-d777b27e70c2","account":"childSubscriber"},"9696d4c5-8f6b-4628-a139-0fc06ac04cd0":{"moviesRestrained":"","firstName":"Tanguy","balanceSubscriberCard":"0.0","currentRentedMovies":"","categoryRestrained":"","children":"","name":"Court","history":"","creditCard":"4567890","maxMovieRented":"3","UUID":"9696d4c5-8f6b-4628-a139-0fc06ac04cd0","account":"adultSubscriber"}}
+{
+  "5a60add7-eecd-4629-b4eb-98922951dc7b": {
+    "moviesRestrained": "",
+    "parent": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+    "firstName": "",
+    "balanceSubscriberCard": "0.0",
+    "currentRentedMovies": "",
+    "categoryRestrained": "",
+    "name": "",
+    "history": "",
+    "creditCard": "0",
+    "maxMovieRented": "3",
+    "UUID": "5a60add7-eecd-4629-b4eb-98922951dc7b",
+    "account": "childSubscriber"
+  },
+  "9bf2f972-6857-4ba1-9f36-77ba9f3f6ec0": {
+    "moviesRestrained": "",
+    "firstName": "tanguy",
+    "balanceSubscriberCard": "0.0",
+    "currentRentedMovies": "",
+    "categoryRestrained": "",
+    "children": "",
+    "name": "Court",
+    "history": "",
+    "creditCard": "13456789",
+    "maxMovieRented": "3",
+    "UUID": "9bf2f972-6857-4ba1-9f36-77ba9f3f6ec0",
+    "account": "adultSubscriber"
+  },
+  "a6c21b11-a26f-4529-895d-8ff84f1398a7": {
+    "moviesRestrained": "",
+    "firstName": "Jean",
+    "balanceSubscriberCard": "0.0",
+    "currentRentedMovies": "0",
+    "categoryRestrained": "",
+    "children": "97083b2d-3b6c-4cd1-abaf-d777b27e70c2,5a60add7-eecd-4629-b4eb-98922951dc7b",
+    "name": "Paul",
+    "history": "",
+    "creditCard": "0123456789",
+    "maxMovieRented": "3",
+    "UUID": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+    "account": "adultSubscriber"
+  },
+  "97083b2d-3b6c-4cd1-abaf-d777b27e70c2": {
+    "moviesRestrained": "",
+    "parent": "a6c21b11-a26f-4529-895d-8ff84f1398a7",
+    "firstName": "",
+    "balanceSubscriberCard": "0.0",
+    "currentRentedMovies": "",
+    "categoryRestrained": "",
+    "name": "",
+    "history": "",
+    "creditCard": "0",
+    "maxMovieRented": "3",
+    "UUID": "97083b2d-3b6c-4cd1-abaf-d777b27e70c2",
+    "account": "childSubscriber"
+  },
+  "9696d4c5-8f6b-4628-a139-0fc06ac04cd0": {
+    "moviesRestrained": "",
+    "firstName": "Tanguy",
+    "balanceSubscriberCard": "0.0",
+    "currentRentedMovies": "",
+    "categoryRestrained": "",
+    "children": "",
+    "name": "Court",
+    "history": "",
+    "creditCard": "4567890",
+    "maxMovieRented": "3",
+    "UUID": "9696d4c5-8f6b-4628-a139-0fc06ac04cd0",
+    "account": "adultSubscriber"
+  }
+}
