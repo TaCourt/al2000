@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 public interface VideoClubDAO {
         void setPersistence(Persistence persistence);
+        void save(Subscriber subscriber);
         void save(AdultSubscriber adultSubscriber);
         void save(ChildSubscriber childSubscriber);
         Subscriber loadSubscriber (String id);

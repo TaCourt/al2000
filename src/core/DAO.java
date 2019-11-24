@@ -56,6 +56,15 @@ public class DAO implements VideoClubDAO {
         this.persistence.saveSubscriber(subscriberDetails);
     }
 
+    public void save (Subscriber subscriber) {
+        if (subscriber instanceof AdultSubscriber) {
+            this.save((AdultSubscriber) subscriber);
+        }
+        else if (subscriber instanceof AdultSubscriber) {
+            this.save((ChildSubscriber) subscriber);
+        }
+    }
+
     public void save(AdultSubscriber adultSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
