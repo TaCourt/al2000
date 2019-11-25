@@ -3,8 +3,8 @@ package src.gui;
 public interface UserInterface {
 
     // al2000.src.core.VideoClub videoClub;
-
-    void welcomePage();
+    void launch();
+    String welcomePage();
     void cyberVideoMovies();
     void supposedAvailableMovies();
     void signUp();

@@ -63,7 +63,7 @@ public class VideoClub {
     public void launch() {
         this.init();
         setGui(new ConsoleUserInterface(this));
-        gui.welcomePage();
+        gui.launch();
         this.currentSubscriber = null;
     }
 
