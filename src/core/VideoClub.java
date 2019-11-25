@@ -24,7 +24,9 @@ public class VideoClub {
 
     public void init () {
         this.initFilmLibrary();
-        this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
+        this.dao.forEachRental((rental) -> {
+            if (rental.getReturnDate() == null) this.movieLibrary.removeMovie(rental.getMovie());
+        });
         this.currentNonSubRentals = new HashMap<>();
         this.historyNonSubRentals = new HashMap<>();
     }
@@ -32,14 +34,19 @@ public class VideoClub {
     private void initFilmLibrary () {
         HashMap<Long, Movie> allMovies = this.dao.loadAllMovies();
         HashMap<Long, Integer> availableMoviesId = this.dao.loadAvailableMovies();
-        HashMap<Long, Movie> availableMovies = new HashMap<Long, Movie>();
+        HashMap<Long, Movie> availableMovies = new HashMap<>();
+        HashMap<Long, Movie> al2000Movies = new HashMap<>();
 
-        availableMoviesId.forEach((id, nbOfCopies) -> availableMovies.put(id, allMovies.get(id)));
+        availableMoviesId.forEach((id, nbOfCopies) -> {
+            availableMovies.put(id, allMovies.get(id));
+            al2000Movies.put(id, allMovies.get(id));
+        });
 
         List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
                 "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
 
-        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, availableMovies, availableMoviesId, categories);
+
+        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, al2000Movies, availableMoviesId, categories);
     }
 
     public void setPersistence(Persistence persistence) {
@@ -163,7 +170,8 @@ public class VideoClub {
     public boolean rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null && m.isAvailable()) {
-            currentSubscriber.rentMovie(m);
+            Rental rental = currentSubscriber.rentMovie(m);
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
             return true;
         }
@@ -187,7 +195,7 @@ public class VideoClub {
             Rental rental = new Rental(m);
             currentNonSubRentals.put(creditCard, rental);
             rental.setRentingDateToNow();
-            this.dao.saveRental(rental);
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
         }
         return true;

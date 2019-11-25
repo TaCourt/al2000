@@ -37,11 +37,12 @@ public abstract class Subscriber {
      * on l'informe.
      * @param m est le film que l'utilisateur veut louer
      */
-    public void rentMovie(Movie m) {
+    public Rental rentMovie(Movie m) {
         if (currentRentedMovies.size() != maxMovieRented) {
-            addRental(m);
+            return addRental(m);
         } else {
             System.out.println("Tu as deja loué 3 films..");//A changer par une exception
+            return null;
         }
     }
 
@@ -66,8 +67,10 @@ public abstract class Subscriber {
     }
 
 
-    private void addRental(Movie m) {
-        currentRentedMovies.add(new Rental(UUID.randomUUID(), m, this.pricePerDay));
+    private Rental addRental(Movie m) {
+        Rental rental = new Rental(UUID.randomUUID(), m, this.pricePerDay);
+        currentRentedMovies.add(rental);
+        return rental;
     }
     public void addRental(Rental r) { currentRentedMovies.add(r); }
 

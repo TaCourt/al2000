@@ -89,8 +89,6 @@ public class JSONPersistence implements Persistence {
      */
     @Override
     public void saveAvailableMovie (String id, boolean isAvailable, int numberOfCopies) {
-        if (isAvailable == (this.AVAILABLE_MOVIE_JSON_DB.get(id) != null)) return;
-
         if (isAvailable) this.AVAILABLE_MOVIE_JSON_DB.put(id, numberOfCopies);
         else if (this.AVAILABLE_MOVIE_JSON_DB.get(id) != null) this.AVAILABLE_MOVIE_JSON_DB.remove(id);
 
