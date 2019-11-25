@@ -45,6 +45,7 @@ public class VideoClub {
         List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
                 "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
 
+
         this.movieLibrary = new FilmLibrary(allMovies, availableMovies, al2000Movies, availableMoviesId, categories);
     }
 
