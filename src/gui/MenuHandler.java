@@ -52,8 +52,6 @@ public class MenuHandler {
                 System.err.println("Erreur de format : L'entrée doit être le numéro de l'option.");
             }
 
-            if(selectedLine == null || selectedLine.isEmpty() )
-                System.err.println("Erreur : Le numéro entré est inconnu ! Entrez le numéro figurant devant l'option voulue !");
         }
         return userEntry;
     }
