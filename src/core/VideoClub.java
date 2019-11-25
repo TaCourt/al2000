@@ -17,6 +17,7 @@ public class VideoClub {
     private int fineCost;
     private Map<Long, Rental> currentNonSubRentals;
     private Map<Long, Rental> historyNonSubRentals;
+    private List<String> reports;
 
     public VideoClub () {
 
@@ -29,6 +30,7 @@ public class VideoClub {
         });
         this.currentNonSubRentals = new HashMap<>();
         this.historyNonSubRentals = new HashMap<>();
+        this.reports = new LinkedList<>();
     }
 
     private void initFilmLibrary () {
@@ -197,8 +199,9 @@ public class VideoClub {
             rental.setRentingDateToNow();
             this.dao.save(rental);
             movieLibrary.removeMovie(m);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -276,6 +279,10 @@ public class VideoClub {
     public void restrictCategory(String chosenCategory) {
         currentSubscriber.restrictMovieByCategory(chosenCategory);
         this.dao.save(currentSubscriber);
+    }
+
+    public void reportABug(String report){
+        reports.add(report);
     }
 
     public String createNewSubscriber(String[] userData) {
