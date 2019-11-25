@@ -289,6 +289,7 @@ public class VideoClub {
         ChildSubscriberFactory userFactory = new ChildSubscriberFactory();
         Subscriber subscriber = userFactory.makeUser(userData[0], userData[1], (AdultSubscriber) currentSubscriber);
         this.dao.save((ChildSubscriber) subscriber);
+        this.dao.save((AdultSubscriber) currentSubscriber);
     }
 
     public boolean canAccessChildRestrictionPage() {
