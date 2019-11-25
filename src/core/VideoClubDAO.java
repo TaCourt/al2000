@@ -81,7 +81,7 @@ public interface VideoClubDAO {
          *
          * @param rental
          */
-        void saveRental(Rental rental);
+        void save(Rental rental);
 
         /**
          *

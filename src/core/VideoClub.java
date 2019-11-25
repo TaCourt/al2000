@@ -165,7 +165,8 @@ public class VideoClub {
     public boolean rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
         if (currentSubscriber != null && m != null && m.isAvailable()) {
-            currentSubscriber.rentMovie(m);
+            Rental rental = currentSubscriber.rentMovie(m);
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
             return true;
         }
@@ -189,7 +190,7 @@ public class VideoClub {
             Rental rental = new Rental(m);
             currentNonSubRentals.put(creditCard, rental);
             rental.setRentingDateToNow();
-            this.dao.saveRental(rental);
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
         }
         return true;

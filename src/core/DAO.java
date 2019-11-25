@@ -251,7 +251,7 @@ public class DAO implements VideoClubDAO {
         }
     }
 
-    public void saveRental(Rental rental) {
+    public void save(Rental rental) {
         HashMap<String, String> rentalDetails = new HashMap();
 
         rentalDetails.put("UUID", rental.getRentalId().toString());
