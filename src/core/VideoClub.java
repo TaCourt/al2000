@@ -160,12 +160,14 @@ public class VideoClub {
      *
      * @param idMovie : l'identifiant du film que l'utilisateur veut louer
      */
-    public void rentMovie(String idMovie) {
+    public boolean rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
-        if (currentSubscriber != null && m != null) {
+        if (currentSubscriber != null && m != null && m.isAvailable()) {
             currentSubscriber.rentMovie(m);
             movieLibrary.removeMovie(m);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -181,7 +183,7 @@ public class VideoClub {
         }
 
         Movie m = movieLibrary.getMovie(idMovie);
-        if (m != null) {
+        if (m != null && m.isAvailable()) {
             Rental rental = new Rental(m);
             currentNonSubRentals.put(creditCard, rental);
             rental.setRentingDateToNow();

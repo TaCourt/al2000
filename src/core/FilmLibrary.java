@@ -148,8 +148,8 @@ public class FilmLibrary{
         if (nbCopies < 1) {
             return false;
         }
-        nbMovieCopies.get(m.getMovieId());
         nbCopies--;
+        nbMovieCopies.replace(m.getMovieId(), nbCopies);
         if (nbCopies == 0) {
             availableMovies.remove(m.getMovieId());
             al2000Movies.get(m.getMovieId()).setAvailability(false);
