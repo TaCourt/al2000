@@ -1,2 +1,3 @@
 # al2000
-Repo pour le projet de gestion / génie Logiciel.
+Utilisation du logiciel :
+Les fichiers json sont rempli et servent de cas de test.
