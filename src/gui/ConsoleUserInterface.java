@@ -12,8 +12,6 @@ public class ConsoleUserInterface implements UserInterface {
      private String lastName;
      private Boolean isConnected;
 
-    //Interface parent --> afficher historique enfant + restreindre cat enfant.
-    // Interface enfant, pas d'option de restriction
     public ConsoleUserInterface(src.core.VideoClub videoClub){
         this.videoClub = videoClub;
         isConnected = false;
@@ -23,31 +21,36 @@ public class ConsoleUserInterface implements UserInterface {
     // Méthodes de déplacement
     // ---------------------------------------------------------
 
+    public void launch(){
+        while(true){
+            System.out.println("---------------------------------------------");
+            String keywordChoice = welcomePage();
+            redirect(keywordChoice);
+        }
+    }
+
     @Override
-    public void welcomePage() {
+    public String welcomePage() {
         MenuHandler menu = new MenuHandler();
         int userChoice = printMenu(menu);
-        redirect(menu.getKeyword(userChoice));
+        return menu.getKeyword(userChoice);
     }
 
     @Override
     public void cyberVideoMovies() {
         List<String[]> movies = videoClub.getCyberVideoMovie();
         printMovieList(movies);
-        redirectToMainMenu();
     }
 
     @Override
     public void supposedAvailableMovies() {
         List<String[]> movies = videoClub.getAl2000Movies();
         printMovieList(movies);
-        redirectToMainMenu();
     }
 
     private void availableMovies() {
         List<String[]> movies = videoClub.getAvailableMovies();
         printMovieList(movies);
-        redirectToMainMenu();
     }
 
     @Override
@@ -71,7 +74,6 @@ public class ConsoleUserInterface implements UserInterface {
         }else if( validationWord.equals("annuler")){
             System.out.println("Opération annulée.");
         }
-        redirectToMainMenu();
     }
 
     @Override
@@ -92,7 +94,6 @@ public class ConsoleUserInterface implements UserInterface {
         }else if( validationWord.equals("annuler")){
             System.out.println("Opération annulée.");
         }
-        redirectToMainMenu();
     }
 
     @Override
@@ -102,14 +103,12 @@ public class ConsoleUserInterface implements UserInterface {
         redirectFromLoginPage(infosUser); // set isConnected, firstName et lastName
     }
 
-
-
     @Override
     public void accountManagement() {
         printAccountManagement();
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
-        if (chosenCategory.isEmpty()){
+        if (chosenCategory.isEmpty() || !categories.contains(chosenCategory) ){
             System.err.println("Erreur : Le nom de la catégorie n'est pas valide");
             waitAnEntry();
         }else{
@@ -119,7 +118,6 @@ public class ConsoleUserInterface implements UserInterface {
             waitAnEntry();
         }
 
-        redirectToMainMenu();
     }
 
     @Override
@@ -129,26 +127,28 @@ public class ConsoleUserInterface implements UserInterface {
             System.err.println("Erreur : Identifiant de film introuvable.");
             System.err.println("Utilisez les fonctions de recherche pour le trouver.");
             waitAnEntry();
-            redirectToMainMenu();
+            return;
         }
 
         String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
         String validationWord = printUserRentFinalValidation();
 
         if(validationWord.equals("valider")){
-            if (videoClub.rentMovie(id,Long.parseLong(creditCardNumber)) ){
+            int returnCode = videoClub.rentMovie(id,Long.parseLong(creditCardNumber));
+            if ( returnCode == 1 ){
                 printRentMovieSuccess();
                 waitAnEntry();
-            }else{
-                System.err.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau");
+            }else if( returnCode == -1){
+                System.err.println("Vous avez déjà une location en cours, veuillez le retourner le filme avant d'en louer un nouveau");
+                waitAnEntry();
+            }else if (returnCode == -2){
+                System.err.println("Il n'y a plus d'exemplaire disponible pour le film que vous essayer de louer. Repassez plus tard");
                 waitAnEntry();
             }
-            redirectToMainMenu();
         }else if( validationWord.equals("annuler")){
             System.out.println("Opération annulée.");
             waitAnEntry();
         }
-        redirectToMainMenu();
 
     }
 
@@ -167,7 +167,6 @@ public class ConsoleUserInterface implements UserInterface {
             waitAnEntry();
         }
 
-        redirectToMainMenu();
     }
 
     @Override
@@ -175,7 +174,6 @@ public class ConsoleUserInterface implements UserInterface {
         String report = printBugReportText();
         videoClub.reportABug(report);
         System.out.println("Merci pour votre participation.");
-        redirectToMainMenu();
     }
 
 
@@ -184,7 +182,6 @@ public class ConsoleUserInterface implements UserInterface {
         this.lastName = "";
         this.isConnected = false;
         videoClub.logOut();
-        redirectToMainMenu();
     }
 
 
@@ -198,8 +195,6 @@ public class ConsoleUserInterface implements UserInterface {
             List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
             printMovieList(moviesOfCategory);
         }
-
-        redirectToMainMenu();
     }
 
     private void searchAMovie(){
@@ -211,8 +206,6 @@ public class ConsoleUserInterface implements UserInterface {
         }else{
             printMovieList(movies);
         }
-
-        redirectToMainMenu();
     }
 
     private void manageChildRestrictionCategory(){
@@ -220,7 +213,7 @@ public class ConsoleUserInterface implements UserInterface {
         Map<String,String> names = videoClub.getChildrenNames();
         if ( names.isEmpty() ){
             System.err.println("Vous n'avez pas de compte enfant.");
-            redirectToMainMenu();
+            return;
         }
         int userChoice = printChildRestrictPage(menu,names);
 
@@ -236,8 +229,6 @@ public class ConsoleUserInterface implements UserInterface {
             System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de ses prochaines recherches");
             waitAnEntry();
         }
-
-        redirectToMainMenu();
     }
 
 
@@ -536,13 +527,8 @@ public class ConsoleUserInterface implements UserInterface {
         } else {
             printLoginFailedMessage();
         }
-        redirectToMainMenu();
     }
 
-    private void redirectToMainMenu(){
-        System.out.println("------------------------------------------");
-        welcomePage();
-    }
 
     private void waitAnEntry(){
         new Scanner(System.in).nextLine();

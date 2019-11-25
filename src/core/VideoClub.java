@@ -45,7 +45,7 @@ public class VideoClub {
         });
 
         List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
-                "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
+                "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre","Drame","Thriller");
 
 
         this.movieLibrary = new FilmLibrary(allMovies, availableMovies, al2000Movies, availableMoviesId, categories);
@@ -63,7 +63,7 @@ public class VideoClub {
     public void launch() {
         this.init();
         setGui(new ConsoleUserInterface(this));
-        gui.welcomePage();
+        gui.launch();
         this.currentSubscriber = null;
     }
 
@@ -187,9 +187,9 @@ public class VideoClub {
      * @param idMovie    : l'identifiant du film que l'utilisateur veut louer
      * @param creditCard : la carte de crédit de l'utilisateur
      */
-    public boolean rentMovie(String idMovie, long creditCard) {
+    public int rentMovie(String idMovie, long creditCard) {
         if (currentNonSubRentals.get(creditCard) != null) {
-            return false;
+            return -1;
         }
 
         Movie m = movieLibrary.getMovie(idMovie);
@@ -199,9 +199,10 @@ public class VideoClub {
             rental.setRentingDateToNow();
             this.dao.save(rental);
             movieLibrary.removeMovie(m);
-            return true;
+            return 1;
+        }else{
+            return -2;
         }
-        return false;
     }
 
     /**

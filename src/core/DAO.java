@@ -251,7 +251,7 @@ public class DAO implements VideoClubDAO {
 
     @Override
     public HashMap<Long, Movie> loadAllMovies () {
-        HashMap<Long, Movie> movies = new HashMap<Long, Movie>();
+        HashMap<Long, Movie> movies = new HashMap<>();
 
         this.persistence.loadAllMoviesIds().forEach((id) -> {
             movies.put(Long.valueOf(id), this.loadMovie(id));
