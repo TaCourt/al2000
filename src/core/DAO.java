@@ -13,14 +13,16 @@ public class DAO implements VideoClubDAO {
 
     private Persistence persistence;
 
-    public DAO () {
-
-    }
-
+    @Override
     public void setPersistence(Persistence persistence) {
         this.persistence = persistence;
     }
 
+    /**
+     * Sauvegarde la partie commune aux classes qui hérite de Subscriber dans subscriberDetails
+     * @param subscriber le Subscriber à sauvegarder
+     * @param subscriberDetails La HashMap où sauvegarder les informations du Subscriber
+     */
     private void save(Subscriber subscriber, HashMap<String, String> subscriberDetails) {
         final StringJoiner joinedCategoryRestrained = new StringJoiner(",");
         subscriber.getCategoryRestrained().forEach((String category) -> {
@@ -56,6 +58,7 @@ public class DAO implements VideoClubDAO {
         this.persistence.saveSubscriber(subscriberDetails);
     }
 
+    @Override
     public void save (Subscriber subscriber) {
         if (subscriber instanceof AdultSubscriber) {
             this.save((AdultSubscriber) subscriber);
@@ -65,6 +68,7 @@ public class DAO implements VideoClubDAO {
         }
     }
 
+    @Override
     public void save(AdultSubscriber adultSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
@@ -79,6 +83,7 @@ public class DAO implements VideoClubDAO {
         this.save(adultSubscriber, subscriberDetails);
     }
 
+    @Override
     public void save(ChildSubscriber childSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
@@ -92,6 +97,7 @@ public class DAO implements VideoClubDAO {
         this.save(childSubscriber, subscriberDetails);
     }
 
+    @Override
     public Subscriber loadSubscriber (String id) {
         HashMap<String, String> subscriberDetails = this.persistence.loadSubscriber(id);
 
@@ -113,10 +119,22 @@ public class DAO implements VideoClubDAO {
         return subscriber;
     }
 
+
+    /**
+     * Charge un ChildSubscriber dont le parent n'est pas déjà chargé
+     * @param subscriberDetails détails du ChildSubscriber
+     * @return le ChildSubscriber associé aux informations de subscriberDetails
+     */
     private ChildSubscriber loadChildSubscriber(HashMap<String, String> subscriberDetails) {
         return loadChildSubscriber(subscriberDetails, this.loadAdultSubscriber(subscriberDetails));
     }
 
+    /**
+     * Charge un ChildSubscriber dont le parent AdultSubscriber est parent
+     * @param subscriberDetails détails du ChildSubscriber
+     * @param parent parent AdultSubscriber du ChildSubscriber
+     * @return le ChildSubscriber associé aux informations de subscriberDetails
+     */
     private ChildSubscriber loadChildSubscriber(HashMap<String, String> subscriberDetails, AdultSubscriber parent) {
         String childId = subscriberDetails.get("UUID");
 
@@ -129,6 +147,11 @@ public class DAO implements VideoClubDAO {
         return childSubscriber;
     }
 
+    /**
+     * Charge un AdultSubscriber associé aux informations de subscriberDetails
+     * @param subscriberDetails  détails de l'AdultSubscriber
+     * @return un AdultSubscriber associé aux informations de subscriberDetails
+     */
     private AdultSubscriber loadAdultSubscriber(HashMap<String, String> subscriberDetails) {
         final String adultSubscriberId = subscriberDetails.get("UUID");
 
@@ -145,12 +168,16 @@ public class DAO implements VideoClubDAO {
             }
         }
 
-        loadSubscriber(subscriberDetails, adultSubscriber);
+        this.loadSubscriber(subscriberDetails, adultSubscriber);
         return adultSubscriber;
     }
 
+    /**
+     * Charge la partie commune aux classes qui hérite de Subscriber dans subscriberDetails
+     * @param subscriberDetails le Subscriber à charger
+     * @param subscriber La HashMap où charger les informations du Subscriber
+     */
     private void loadSubscriber(HashMap<String, String> subscriberDetails, Subscriber subscriber) {
-        //TODO Remplir la liste d'enfants au chargement.
         String[] splitString;
         if (subscriberDetails.get("categoryRestrained").length() != 0) {
             splitString = subscriberDetails.get("categoryRestrained").split(",");
@@ -181,7 +208,7 @@ public class DAO implements VideoClubDAO {
         }
     }
 
-
+    @Override
     public void saveMovie (Movie movie) {
         HashMap<String, String> movieDetails = new HashMap<>();
 
@@ -200,9 +227,13 @@ public class DAO implements VideoClubDAO {
 
         this.persistence.saveMovie(movieDetails);
     }
+
+    @Override
     public void saveAvailableMovie (Movie movie, boolean isAvailable, int numberOfCopies) {
         this.persistence.saveAvailableMovie(movie.getMovieId().toString(), isAvailable, numberOfCopies);
     }
+
+    @Override
     public Movie loadMovie (String id) {
         HashMap<String, String> movieDetails = this.persistence.loadMovie(id);
 
@@ -222,6 +253,7 @@ public class DAO implements VideoClubDAO {
             Boolean.valueOf(movieDetails.get("available")));
     }
 
+    @Override
     public HashMap<Long, Movie> loadAllMovies () {
         HashMap<Long, Movie> movies = new HashMap<>();
 
@@ -232,10 +264,12 @@ public class DAO implements VideoClubDAO {
         return movies;
     }
 
+    @Override
     public HashMap<Long, Integer> loadAvailableMovies () {
         return this.persistence.getAvailableMovies();
     }
 
+    @Override
     public Rental loadRental(String currentRentalId) {
         HashMap<String, String> rentalDetails = this.persistence.loadRental(currentRentalId);
         if (rentalDetails == null) {
@@ -256,6 +290,7 @@ public class DAO implements VideoClubDAO {
         }
     }
 
+    @Override
     public void save(Rental rental) {
         HashMap<String, String> rentalDetails = new HashMap();
 
@@ -273,6 +308,7 @@ public class DAO implements VideoClubDAO {
         this.persistence.saveRental(rentalDetails);
     }
 
+    @Override
     public void forEachRental(Consumer<Rental> callback) {
         this.persistence.loadAllRentalIds().forEach((id) -> {
             callback.accept(this.loadRental((String) id));
