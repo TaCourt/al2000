@@ -67,6 +67,7 @@ public class ConsoleUserInterface implements UserInterface {
                     "d'abonné pour vous connecter lors de votre prochaine visite");
             System.out.println("Voilà votre numéro d'identification :");
             System.out.println(id);
+            waitAnEntry();
         }else if( validationWord.equals("annuler")){
             System.out.println("Opération annulée.");
         }
@@ -109,12 +110,13 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un nom de catégorie valide");
+            System.err.println("Erreur : Le nom de la catégorie n'est pas valide");
             waitAnEntry();
         }else{
             videoClub.restrictCategory(chosenCategory);
             System.out.println("Opération enregistré");
             System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de vos prochaines recherches");
+            waitAnEntry();
         }
 
         redirectToMainMenu();
@@ -171,6 +173,7 @@ public class ConsoleUserInterface implements UserInterface {
     @Override
     public void reportABug() {
         String report = printBugReportText();
+        videoClub.reportABug(report);
         System.out.println("Merci pour votre participation.");
         redirectToMainMenu();
     }
@@ -219,15 +222,13 @@ public class ConsoleUserInterface implements UserInterface {
             System.err.println("Vous n'avez pas de compte enfant.");
             redirectToMainMenu();
         }
-
-
         int userChoice = printChildRestrictPage(menu,names);
 
         System.out.println("Maintenant, choisissez la catégorie à limiter.");
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
-        if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un nom de catégorie valide");
+        if (chosenCategory.isEmpty() || !categories.contains(chosenCategory) ){
+            System.err.println("Erreur : Le nom de la catégorie n'est pas valide");
             waitAnEntry();
         }else{
             videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
