@@ -102,14 +102,12 @@ public class ConsoleUserInterface implements UserInterface {
         redirectFromLoginPage(infosUser); // set isConnected, firstName et lastName
     }
 
-
-
     @Override
     public void accountManagement() {
         printAccountManagement();
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
-        if (chosenCategory.isEmpty()){
+        if (chosenCategory.isEmpty() || !categories.contains(chosenCategory) ){
             System.err.println("Erreur : Le nom de la catégorie n'est pas valide");
             waitAnEntry();
         }else{
@@ -136,11 +134,15 @@ public class ConsoleUserInterface implements UserInterface {
         String validationWord = printUserRentFinalValidation();
 
         if(validationWord.equals("valider")){
-            if (videoClub.rentMovie(id,Long.parseLong(creditCardNumber)) ){
+            int returnCode = videoClub.rentMovie(id,Long.parseLong(creditCardNumber));
+            if ( returnCode == 1 ){
                 printRentMovieSuccess();
                 waitAnEntry();
-            }else{
-                System.err.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau");
+            }else if( returnCode == -1){
+                System.err.println("Vous avez déjà une location en cours, veuillez le retourner le filme avant d'en louer un nouveau");
+                waitAnEntry();
+            }else if (returnCode == -2){
+                System.err.println("Il n'y a plus d'exemplaire disponible pour le film que vous essayer de louer. Repassez plus tard");
                 waitAnEntry();
             }
             redirectToMainMenu();
