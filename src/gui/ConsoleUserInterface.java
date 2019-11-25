@@ -153,8 +153,15 @@ public class ConsoleUserInterface implements UserInterface {
     @Override
     public void returnMovie() {
         String idMovieReturned = printReturnAMovie();
-        videoClub.returnMovie(idMovieReturned);
-        System.out.println("Veuillez placer le DVD dans la trappe");
+        String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
+        Double retour = videoClub.returnMovie(idMovieReturned,Long.parseLong(creditCardNumber));
+        if(retour == Double.parseDouble("-1")){
+            System.err.println("Le numéro de carte n'est pas reconnu.");
+            waitAnEntry();
+        }else{
+            System.out.println("Veuillez placer le DVD dans la trappe");
+            System.out.println("Vous serez facturé de "+retour+" €");
+        }
 
         redirectToMainMenu();
     }
@@ -167,7 +174,7 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
 
-    public void signOut(){
+    private void signOut(){
         this.firstName = "";
         this.lastName = "";
         this.isConnected = false;
@@ -180,7 +187,7 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un lastName de catégorie valide");
+            System.err.println("Erreur : entrez un nom de catégorie valide");
             waitAnEntry();
         }else{
             List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
@@ -212,12 +219,13 @@ public class ConsoleUserInterface implements UserInterface {
         List<String> categories = videoClub.getCategories();
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
-            System.err.println("Erreur : entrez un lastName de catégorie valide");
+            System.err.println("Erreur : entrez un nom de catégorie valide");
             waitAnEntry();
         }else{
             videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
             System.out.println("Opération enregistré");
             System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de ses prochaines recherches");
+            waitAnEntry();
         }
 
         redirectToMainMenu();
@@ -341,7 +349,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Voici la liste des catégories disponible :");
         System.out.println(categories.toString());
         System.out.println();
-        System.out.println("Entrez le lastName de la catégorie à filtrer :");
+        System.out.println("Entrez le nom de la catégorie à filtrer :");
         Scanner scanner = new Scanner(System.in);
         String chosenCategory = scanner.nextLine();
         if( chosenCategory == null ){
@@ -409,7 +417,7 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     private String printUserRentFinalValidation(){
-        System.out.println("Confirmer la création de compte ?");
+        System.out.println("Confirmer la location de ce film ?");
         String validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
         while( !validationWord.equals("valider") && !validationWord.equals("annuler")){
             System.err.println("Réponse non reconnue");

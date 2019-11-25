@@ -217,6 +217,9 @@ public class VideoClub {
     public Double returnMovie(String idMovieReturned, long creditCard) {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         Rental oldRental = currentNonSubRentals.get(creditCard);
+        if( oldRental == null )
+            return Double.parseDouble("-1");
+        oldRental.setReturnDateToNow();
         currentNonSubRentals.remove(creditCard);
         historyNonSubRentals.put(creditCard, oldRental);
         movieLibrary.addMovie(m);
