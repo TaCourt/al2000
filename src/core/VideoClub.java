@@ -197,8 +197,9 @@ public class VideoClub {
             rental.setRentingDateToNow();
             this.dao.save(rental);
             movieLibrary.removeMovie(m);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
