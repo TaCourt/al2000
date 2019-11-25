@@ -68,7 +68,7 @@ public class DAO implements VideoClubDAO {
     public void save(AdultSubscriber adultSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
-        final StringJoiner childrenIds = new StringJoiner(",");
+        StringJoiner childrenIds = new StringJoiner(",");
         adultSubscriber.getChildren().forEach((ChildSubscriber child) -> {
             childrenIds.add(child.getSubscriberId().toString());
         });
@@ -84,6 +84,10 @@ public class DAO implements VideoClubDAO {
 
         subscriberDetails.put("account", this.CHILD_SUBSCRIBER_ACCOUNT);
         subscriberDetails.put("parent", childSubscriber.getParent().getSubscriberId().toString());
+
+        //TODO affecter ce child dans le parent
+        AdultSubscriber parent = (AdultSubscriber) loadSubscriber(childSubscriber.getParent().getSubscriberId().toString());
+
 
         this.save(childSubscriber, subscriberDetails);
     }
@@ -146,6 +150,7 @@ public class DAO implements VideoClubDAO {
     }
 
     private void loadSubscriber(HashMap<String, String> subscriberDetails, Subscriber subscriber) {
+        //TODO Remplir la liste d'enfants au chargement.
         String[] splitString;
         if (subscriberDetails.get("categoryRestrained").length() != 0) {
             splitString = subscriberDetails.get("categoryRestrained").split(",");

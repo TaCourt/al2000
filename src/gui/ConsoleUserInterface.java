@@ -215,6 +215,12 @@ public class ConsoleUserInterface implements UserInterface {
     private void manageChildRestrictionCategory(){
         MenuHandler menu = new MenuHandler();
         Map<String,String> names = videoClub.getChildrenNames();
+        if ( names.isEmpty() ){
+            System.err.println("Vous n'avez pas de compte enfant.");
+            redirectToMainMenu();
+        }
+
+
         int userChoice = printChildRestrictPage(menu,names);
 
         System.out.println("Maintenant, choisissez la catégorie à limiter.");
