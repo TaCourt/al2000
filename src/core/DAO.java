@@ -90,10 +90,6 @@ public class DAO implements VideoClubDAO {
         subscriberDetails.put("account", this.CHILD_SUBSCRIBER_ACCOUNT);
         subscriberDetails.put("parent", childSubscriber.getParent().getSubscriberId().toString());
 
-        //TODO affecter ce child dans le parent
-        AdultSubscriber parent = (AdultSubscriber) loadSubscriber(childSubscriber.getParent().getSubscriberId().toString());
-
-
         this.save(childSubscriber, subscriberDetails);
     }
 
@@ -182,7 +178,7 @@ public class DAO implements VideoClubDAO {
         if (subscriberDetails.get("categoryRestrained").length() != 0) {
             splitString = subscriberDetails.get("categoryRestrained").split(",");
             for (String category : splitString) {
-                subscriber.restrictMovieByTitle(category);
+                subscriber.restrictMovieByCategory(category);
             }
         }
 
