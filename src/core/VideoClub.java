@@ -230,6 +230,9 @@ public class VideoClub {
     }
 
     public boolean exists(String identifiant) {
+        if (identifiant == null || identifiant.isEmpty() || !identifiant.matches("[0-9]*") ) {
+            return false;
+        }
         Movie movie = movieLibrary.getMovie(identifiant);
         if (movie == null) {
             return false;

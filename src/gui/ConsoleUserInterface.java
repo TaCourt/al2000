@@ -156,11 +156,13 @@ public class ConsoleUserInterface implements UserInterface {
         String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
         Double retour = videoClub.returnMovie(idMovieReturned,Long.parseLong(creditCardNumber));
         if(retour == Double.parseDouble("-1")){
-            System.err.println("Le numéro de carte n'est pas reconnu.");
+            System.err.println("Opération annulée !");
+            System.err.println("Aucune location n'est en cours pour cette carte bleue.");
             waitAnEntry();
         }else{
             System.out.println("Veuillez placer le DVD dans la trappe");
-            System.out.println("Vous serez facturé de "+retour+" €");
+            System.out.println("Vous serez facturé de "+retour.intValue()+" €");
+            waitAnEntry();
         }
 
         redirectToMainMenu();
@@ -301,6 +303,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Réalisateur : " + movie[7] );
         System.out.println("Identifiant : " + movie[8]);
     }
+
     private void printMovieList(List<String[]> movies){
 
         for( String[] movie : movies){
@@ -315,7 +318,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println();
         Scanner scanner = new Scanner(System.in);
         String id = scanner.nextLine();
-        if( id == null ){
+        if( id == null || id.isEmpty() ){
             return "";
         }else{
             return id;
