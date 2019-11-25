@@ -35,8 +35,12 @@ public class Rental {
         return this.movie;
     }
 
-    public void setReturnDate () {
+    public void setReturnDateToNow() {
         this.returnDate = Date.from(Instant.now());
+    }
+
+    public void setRentingDateToNow () {
+        this.rentingDate = new Date();
     }
 
     public Date getReturnDate() {

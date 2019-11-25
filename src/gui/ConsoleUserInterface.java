@@ -8,8 +8,8 @@ public class ConsoleUserInterface implements UserInterface {
 
      private src.core.VideoClub videoClub;
 
-     private String prenom;
-     private String nom;
+     private String firstName;
+     private String lastName;
      private Boolean isConnected;
 
     //Interface parent --> afficher historique enfant + restreindre cat enfant.
@@ -98,7 +98,7 @@ public class ConsoleUserInterface implements UserInterface {
     public void signIn() {
         String numCarte = printSignInPage();
         String[] infosUser = videoClub.logIn(numCarte);
-        redirectFromLoginPage(infosUser); // set isConnected, prenom et nom
+        redirectFromLoginPage(infosUser); // set isConnected, firstName et lastName
     }
 
 
@@ -110,6 +110,7 @@ public class ConsoleUserInterface implements UserInterface {
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un nom de catégorie valide");
+            waitAnEntry();
         }else{
             videoClub.restrictCategory(chosenCategory);
             System.out.println("Opération enregistré");
@@ -122,14 +123,29 @@ public class ConsoleUserInterface implements UserInterface {
     @Override
     public void rentMovie() {
         String id = printRentMovie();
-        if( videoClub.exists(id)){
-            videoClub.rentMovie(id);
-            printRentMovieSuccess();
-        }else{
-            System.err.println("Erreur : Identifiant de film introuuvable.");
+        if( !videoClub.exists(id)){
+            System.err.println("Erreur : Identifiant de film introuvable.");
             System.err.println("Utilisez les fonctions de recherche pour le trouver.");
+            waitAnEntry();
+            redirectToMainMenu();
         }
 
+        String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
+        String validationWord = printUserRentFinalValidation();
+
+        if(validationWord.equals("valider")){
+            if (videoClub.rentMovie(id,Long.parseLong(creditCardNumber)) ){
+                printRentMovieSuccess();
+                waitAnEntry();
+            }else{
+                System.err.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau");
+                waitAnEntry();
+            }
+            redirectToMainMenu();
+        }else if( validationWord.equals("annuler")){
+            System.out.println("Opération annulée.");
+            waitAnEntry();
+        }
         redirectToMainMenu();
 
     }
@@ -137,8 +153,15 @@ public class ConsoleUserInterface implements UserInterface {
     @Override
     public void returnMovie() {
         String idMovieReturned = printReturnAMovie();
-        videoClub.returnMovie(idMovieReturned);
-        System.out.println("Veuillez placer le DVD dans la trappe");
+        String creditCardNumber = getStringFromUser("Numéro de carte bleue:");
+        Double retour = videoClub.returnMovie(idMovieReturned,Long.parseLong(creditCardNumber));
+        if(retour == Double.parseDouble("-1")){
+            System.err.println("Le numéro de carte n'est pas reconnu.");
+            waitAnEntry();
+        }else{
+            System.out.println("Veuillez placer le DVD dans la trappe");
+            System.out.println("Vous serez facturé de "+retour+" €");
+        }
 
         redirectToMainMenu();
     }
@@ -151,9 +174,9 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
 
-    public void signOut(){
-        this.prenom = "";
-        this.nom = "";
+    private void signOut(){
+        this.firstName = "";
+        this.lastName = "";
         this.isConnected = false;
         videoClub.logOut();
         redirectToMainMenu();
@@ -165,6 +188,7 @@ public class ConsoleUserInterface implements UserInterface {
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un nom de catégorie valide");
+            waitAnEntry();
         }else{
             List<String[]> moviesOfCategory = videoClub.getMoviesByCategory(chosenCategory);
             printMovieList(moviesOfCategory);
@@ -176,8 +200,9 @@ public class ConsoleUserInterface implements UserInterface {
     private void searchAMovie(){
         String searchedTitle = printSearchFromTitle();
         List<String[]> movies = videoClub.getMovieByTitle(searchedTitle);
-        if (movies == null) {
+        if (movies.isEmpty()) {
             System.err.println("Aucun film n'a été trouvé ayant ce titre, vérifiez l'orthograpge.");
+            waitAnEntry();
         }else{
             printMovieList(movies);
         }
@@ -195,10 +220,12 @@ public class ConsoleUserInterface implements UserInterface {
         String chosenCategory = printCategoryList(categories);
         if (chosenCategory.isEmpty()){
             System.err.println("Erreur : entrez un nom de catégorie valide");
+            waitAnEntry();
         }else{
             videoClub.restrictCategoryForChild(menu.getKeyword(userChoice),chosenCategory);
             System.out.println("Opération enregistré");
             System.out.println("la catégorie choisie n'apparaîtra plus dans les résultats, lors de ses prochaines recherches");
+            waitAnEntry();
         }
 
         redirectToMainMenu();
@@ -226,7 +253,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     private int printMenu(MenuHandler menu){
         if( isConnected ){
-            printMenuHeader(prenom,nom);
+            printMenuHeader(firstName, lastName);
         }else{
             printWelcomeHeader();
         }
@@ -259,6 +286,7 @@ public class ConsoleUserInterface implements UserInterface {
 
     private void printLoginFailedMessage() {
         System.err.println("Erreur : Numéro de carte inconnu !");
+        waitAnEntry();
     }
 
 
@@ -286,7 +314,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Pour louer un film, saisissez l'identifiant du film :");
         System.out.println();
         Scanner scanner = new Scanner(System.in);
-        String id = scanner.next();
+        String id = scanner.nextLine();
         if( id == null ){
             return "";
         }else{
@@ -304,7 +332,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Recherche à partir d'un titre");
         System.out.println("Entrez le titre du film que vous cherchez :");
         Scanner scanner = new Scanner(System.in);
-        String titre = scanner.next();
+        String titre = scanner.nextLine();
         if( titre == null ){
             return "";
         }else{
@@ -323,7 +351,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println();
         System.out.println("Entrez le nom de la catégorie à filtrer :");
         Scanner scanner = new Scanner(System.in);
-        String chosenCategory = scanner.next();
+        String chosenCategory = scanner.nextLine();
         if( chosenCategory == null ){
             return "";
         }else{
@@ -336,7 +364,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.out.println("Ceci nous aide grandement à faire évoluer notre système");
         System.out.println("Expliquez nous ce qu'il s'est passé en une ligne :");
         Scanner scanner = new Scanner(System.in);
-        String report = scanner.next();
+        String report = scanner.nextLine();
         if( report == null ){
             return "";
         }else{
@@ -348,7 +376,7 @@ public class ConsoleUserInterface implements UserInterface {
         System.err.println("Pour simuler l'acquisition du film par la machine, on fait remplir son id au client.");
         System.out.println("Pour rendre un film, veuillez composer son identifiant :");
         Scanner scanner = new Scanner(System.in);
-        String idReturnedMovie = scanner.next();
+        String idReturnedMovie = scanner.nextLine();
         if( idReturnedMovie == null ){
             return "";
         }else{
@@ -364,14 +392,14 @@ public class ConsoleUserInterface implements UserInterface {
     private String getStringFromUser(String text){
         System.out.println(text);
         Scanner scanner = new Scanner(System.in);
-        String userEntry = scanner.next();
+        String userEntry = scanner.nextLine();
         if( userEntry == null ){
             userEntry = "";
         }
         while( userEntry == null || userEntry.isEmpty() ){
-            System.err.println("Format invalide, entrez");
+            System.err.println("Format invalide !");
             System.out.println(text);
-            userEntry = scanner.next();
+            userEntry = scanner.nextLine();
         }
         return userEntry;
     }
@@ -388,12 +416,24 @@ public class ConsoleUserInterface implements UserInterface {
         return validationWord;
     }
 
+    private String printUserRentFinalValidation(){
+        System.out.println("Confirmer la location de ce film ?");
+        String validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        while( !validationWord.equals("valider") && !validationWord.equals("annuler")){
+            System.err.println("Réponse non reconnue");
+            System.out.println("Confirmer la création de compte ?");
+            validationWord = getStringFromUser(" Ecrivez \"valider\" ou \"annuler\"");
+        }
+
+        return validationWord;
+    }
+
     private String printSignInPage(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Connexion :");
         System.out.println();
         System.out.println("Passez votre carte sur le lecteur, ou entrez son numéro ci-après :");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     private int printChildRestrictPage(MenuHandler menu, Map<String,String> names){
@@ -481,8 +521,8 @@ public class ConsoleUserInterface implements UserInterface {
         String nom = userInfos[1];
         if (!prenom.isEmpty() || !nom.isEmpty()) {
             isConnected = true;
-            this.prenom = prenom;
-            this.nom = nom;
+            this.firstName = prenom;
+            this.lastName = nom;
         } else {
             printLoginFailedMessage();
         }
@@ -492,6 +532,10 @@ public class ConsoleUserInterface implements UserInterface {
     private void redirectToMainMenu(){
         System.out.println("------------------------------------------");
         welcomePage();
+    }
+
+    private void waitAnEntry(){
+        new Scanner(System.in).nextLine();
     }
 
 }

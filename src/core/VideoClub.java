@@ -24,29 +24,28 @@ public class VideoClub {
 
     public void init () {
         this.initFilmLibrary();
-
-        this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
-
-
-        System.out.println(movieLibrary.getAvailableMovies());
-        System.out.println(movieLibrary.getAl2000Movies());
+        this.dao.forEachRental((rental) -> {
+            if (rental.getReturnDate() == null) this.movieLibrary.removeMovie(rental.getMovie());
+        });
+        this.currentNonSubRentals = new HashMap<>();
+        this.historyNonSubRentals = new HashMap<>();
     }
 
     private void initFilmLibrary () {
         HashMap<Long, Movie> allMovies = this.dao.loadAllMovies();
         HashMap<Long, Integer> availableMoviesId = this.dao.loadAvailableMovies();
-        HashMap<Long, Movie> availableMovies = new HashMap<Long, Movie>();
+        HashMap<Long, Movie> availableMovies = new HashMap<>();
+        HashMap<Long, Movie> al2000Movies = new HashMap<>();
 
-        availableMoviesId.forEach((id, nbOfCopies) -> availableMovies.put(id, allMovies.get(id)));
+        availableMoviesId.forEach((id, nbOfCopies) -> {
+            availableMovies.put(id, allMovies.get(id));
+            al2000Movies.put(id, allMovies.get(id));
+        });
 
         List<String> categories = Arrays.asList("Action", "Animation", "Aventure", "Documentaire", "Fantastique",
                 "Science-fiction", "Comédie", "Pour adulte", "Western", "Guerre");
 
-        System.out.println(allMovies);
-        System.out.println(availableMoviesId);
-        System.out.println(availableMovies);
-
-        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, availableMovies, availableMoviesId, categories);
+        this.movieLibrary = new FilmLibrary(allMovies, availableMovies, al2000Movies, availableMoviesId, categories);
     }
 
     public void setPersistence(Persistence persistence) {
@@ -59,8 +58,10 @@ public class VideoClub {
     }
 
     public void launch() {
+        this.init();
         setGui(new ConsoleUserInterface(this));
         gui.welcomePage();
+        this.currentSubscriber = null;
     }
 
     public String[] logIn(String numCarte) {
@@ -133,6 +134,8 @@ public class VideoClub {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getAvailableMovies(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained()));
         }
+
+
         return convertList(movieLibrary.getAvailableMovies());
     }
 
@@ -154,7 +157,7 @@ public class VideoClub {
         if (currentSubscriber != null) {
             return convertList(movieLibrary.getMovieByCategory(currentSubscriber.getCategoryRestrained(), currentSubscriber.getMoviesRestrained(), category));
         }
-        return convertList(movieLibrary.getMovieFromTitle(category));
+        return convertList(movieLibrary.getMovieByCategory(category));
     }
 
     /**
@@ -163,12 +166,15 @@ public class VideoClub {
      *
      * @param idMovie : l'identifiant du film que l'utilisateur veut louer
      */
-    public void rentMovie(String idMovie) {
+    public boolean rentMovie(String idMovie) {
         Movie m = movieLibrary.getMovie(idMovie);
-        if (currentSubscriber != null && m != null) {
-            currentSubscriber.rentMovie(m);
+        if (currentSubscriber != null && m != null && m.isAvailable()) {
+            Rental rental = currentSubscriber.rentMovie(m);
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -178,18 +184,20 @@ public class VideoClub {
      * @param idMovie    : l'identifiant du film que l'utilisateur veut louer
      * @param creditCard : la carte de crédit de l'utilisateur
      */
-    public void rentMovie(String idMovie, long creditCard) {
+    public boolean rentMovie(String idMovie, long creditCard) {
         if (currentNonSubRentals.get(creditCard) != null) {
-            System.out.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau svp");
+            return false;
         }
 
         Movie m = movieLibrary.getMovie(idMovie);
-        if (m != null) {
+        if (m != null && m.isAvailable()) {
             Rental rental = new Rental(m);
             currentNonSubRentals.put(creditCard, rental);
-            this.dao.saveRental(rental);
+            rental.setRentingDateToNow();
+            this.dao.save(rental);
             movieLibrary.removeMovie(m);
         }
+        return true;
     }
 
     /**
@@ -218,6 +226,9 @@ public class VideoClub {
     public Double returnMovie(String idMovieReturned, long creditCard) {
         Movie m = movieLibrary.getMovie(idMovieReturned);
         Rental oldRental = currentNonSubRentals.get(creditCard);
+        if( oldRental == null )
+            return Double.parseDouble("-1");
+        oldRental.setReturnDateToNow();
         currentNonSubRentals.remove(creditCard);
         historyNonSubRentals.put(creditCard, oldRental);
         movieLibrary.addMovie(m);
@@ -240,6 +251,7 @@ public class VideoClub {
         for (ChildSubscriber child : children){
             if(child.getSubscriberId() == UUID.fromString(childId)){
                 child.restrictMovieByCategory(chosenCategory);
+                this.dao.save(child);
             }
         }
     }
@@ -259,6 +271,7 @@ public class VideoClub {
 
     public void restrictCategory(String chosenCategory) {
         currentSubscriber.restrictMovieByCategory(chosenCategory);
+        this.dao.save(currentSubscriber);
     }
 
     public String createNewSubscriber(String[] userData) {

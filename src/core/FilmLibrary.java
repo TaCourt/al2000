@@ -110,12 +110,12 @@ public class FilmLibrary{
         return filter(restrainedCategory, restrainedMovie, toReturn);
     }
 
-    public Movie getMovie(String id) {
-        return al2000Movies.get(Long.parseLong(id));
-    }
-
     public Map<Long, Movie> getMovieByCategory(String category) {
         return search("categorie", category);
+    }
+
+    public Movie getMovie(String id) {
+        return al2000Movies.get(Long.parseLong(id));
     }
 
     public List<String> getCategoriesSet() {
@@ -148,8 +148,8 @@ public class FilmLibrary{
         if (nbCopies < 1) {
             return false;
         }
-        nbMovieCopies.get(m.getMovieId());
         nbCopies--;
+        nbMovieCopies.replace(m.getMovieId(), nbCopies);
         if (nbCopies == 0) {
             availableMovies.remove(m.getMovieId());
             al2000Movies.get(m.getMovieId()).setAvailability(false);

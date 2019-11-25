@@ -56,6 +56,15 @@ public class DAO implements VideoClubDAO {
         this.persistence.saveSubscriber(subscriberDetails);
     }
 
+    public void save (Subscriber subscriber) {
+        if (subscriber instanceof AdultSubscriber) {
+            this.save((AdultSubscriber) subscriber);
+        }
+        else if (subscriber instanceof AdultSubscriber) {
+            this.save((ChildSubscriber) subscriber);
+        }
+    }
+
     public void save(AdultSubscriber adultSubscriber) {
         HashMap<String, String> subscriberDetails = new HashMap<String, String>();
 
@@ -198,14 +207,14 @@ public class DAO implements VideoClubDAO {
 
         return new Movie(Long.parseLong(movieDetails.get("id")),
             movieDetails.get("affiche"),
-            movieDetails.get("titre"),
+            movieDetails.get("title"),
             movieDetails.get("category"),
             movieDetails.get("synopsis"),
             Integer.parseInt(movieDetails.get("duration")),
-            movieDetails.get("langue"),
+            movieDetails.get("language"),
             movieDetails.get("actor"),
             movieDetails.get("director"),
-            false);
+            Boolean.valueOf(movieDetails.get("available")));
     }
 
     public HashMap<Long, Movie> loadAllMovies () {
@@ -229,25 +238,32 @@ public class DAO implements VideoClubDAO {
         }
 
         try {
+            String returnDate = rentalDetails.get("returnDate");
+
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
-                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
-                    DateFormat.getDateInstance().parse(rentalDetails.get("returnDate")),
+                    this.loadMovie(rentalDetails.get("movieId")),
+                    "".equals(returnDate) ? null : DateFormat.getDateInstance().parse(returnDate),
                     DateFormat.getDateInstance().parse(rentalDetails.get("rentingDate")));
         } catch (ParseException e) {
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
-                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
+                    this.loadMovie(rentalDetails.get("movieId")),
                     null, null);
         }
     }
 
-    public void saveRental(Rental rental) {
+    public void save(Rental rental) {
         HashMap<String, String> rentalDetails = new HashMap();
 
         rentalDetails.put("UUID", rental.getRentalId().toString());
         rentalDetails.put("movieId", rental.getMovie().getMovieId().toString());
         rentalDetails.put("price", rental.getPricePerDay().toString());
-        rentalDetails.put("returnDate", rental.getReturnDate().toString());
         rentalDetails.put("rentingDate", rental.getRentingDate().toString());
+        if(rental.getReturnDate() == null){
+            rentalDetails.put("returnDate", "");
+        }else{
+            rentalDetails.put("returnDate", rental.getReturnDate().toString());
+        }
+
 
         this.persistence.saveRental(rentalDetails);
     }
