@@ -42,8 +42,6 @@ public class FilmLibrary{
         switch(component) {
             case "titre" :
                 for (Long key : al2000Movies.keySet()) {
-                    System.out.println(al2000Movies.get(key).getTitle());
-                    System.out.println(componentValue);
                     if (al2000Movies.get(key).getTitle().equals(componentValue)) {
                         toReturn.put(key, al2000Movies.get(key));
                     }
@@ -150,8 +148,8 @@ public class FilmLibrary{
         if (nbCopies < 1) {
             return false;
         }
-        nbMovieCopies.get(m.getMovieId());
         nbCopies--;
+        nbMovieCopies.replace(m.getMovieId(), nbCopies);
         if (nbCopies == 0) {
             availableMovies.remove(m.getMovieId());
             al2000Movies.get(m.getMovieId()).setAvailability(false);
