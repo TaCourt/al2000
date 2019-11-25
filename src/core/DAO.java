@@ -239,12 +239,12 @@ public class DAO implements VideoClubDAO {
 
         try {
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
-                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
+                    this.loadMovie(rentalDetails.get("movieId")),
                     DateFormat.getDateInstance().parse(rentalDetails.get("returnDate")),
                     DateFormat.getDateInstance().parse(rentalDetails.get("rentingDate")));
         } catch (ParseException e) {
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
-                    this.loadMovie(rentalDetails.get(rentalDetails.get("movieId"))),
+                    this.loadMovie(rentalDetails.get("movieId")),
                     null, null);
         }
     }
