@@ -136,6 +136,7 @@ public class ConsoleUserInterface implements UserInterface {
         if(validationWord.equals("valider")){
             if (videoClub.rentMovie(id,Long.parseLong(creditCardNumber)) ){
                 printRentMovieSuccess();
+                waitAnEntry();
             }else{
                 System.err.println("Vous avez deja loué un film chez nous, veuillez le rendre avant d'en louer un nouveau");
                 waitAnEntry();
@@ -526,7 +527,7 @@ public class ConsoleUserInterface implements UserInterface {
     }
 
     private void waitAnEntry(){
-        new Scanner(System.in).next();
+        new Scanner(System.in).nextLine();
     }
 
 }
