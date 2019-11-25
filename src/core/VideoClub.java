@@ -24,7 +24,9 @@ public class VideoClub {
 
     public void init () {
         this.initFilmLibrary();
-        this.dao.forEachRental((rental) -> this.movieLibrary.removeMovie(rental.getMovie()));
+        this.dao.forEachRental((rental) -> {
+            if (rental.getReturnDate() == null) this.movieLibrary.removeMovie(rental.getMovie());
+        });
         this.currentNonSubRentals = new HashMap<>();
         this.historyNonSubRentals = new HashMap<>();
     }

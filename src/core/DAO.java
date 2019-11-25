@@ -238,9 +238,11 @@ public class DAO implements VideoClubDAO {
         }
 
         try {
+            String returnDate = rentalDetails.get("returnDate");
+
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
                     this.loadMovie(rentalDetails.get("movieId")),
-                    DateFormat.getDateInstance().parse(rentalDetails.get("returnDate")),
+                    "".equals(returnDate) ? null : DateFormat.getDateInstance().parse(returnDate),
                     DateFormat.getDateInstance().parse(rentalDetails.get("rentingDate")));
         } catch (ParseException e) {
             return new Rental(UUID.fromString(rentalDetails.get("UUID")),
